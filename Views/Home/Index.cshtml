@@ -29,12 +29,12 @@
             @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...",new { @class = "form-control" })
         </div>
         <div class="col-1">
-            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>
+            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>  
         </div>
     </div>
     <div class="row">
         <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
-            <button id="attrButton0" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(0)">Average</button>
+            <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">Average</button>
             <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">On Base %</button>
             <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">Slugging %</button>
             <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">OPS</button>
@@ -126,21 +126,28 @@
 
         getPlayerData: function (id) {
             var name = $("#dropDownPlayers option:selected").text();
-            $.ajax({
-                type: "GET",
-                url: "Home/GetPlayerData",
-                data: { playerId: id },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    statGrapher.data.push({ name, response });
-                    statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex]);
-                    var newRow = "<tr><td>" + name + "</td><td><button onclick='statGrapher.removeData(this)'>Remove</button></td>";
-                    $("#playerList tbody").append(newRow);
-                    statGrapher.toggleAddActive();
-                },
-                error: function () { alert("you are a failure") }
-            });
+
+            $('#btnAddPlayer').attr('disabled', 'disabled');
+            setTimeout(1000);
+            if (statGrapher.data.length < statGrapher.maxPlayers) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "Home/GetPlayerData",
+                    data: { playerId: id },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        statGrapher.data.push({ name, response });
+                        statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex]);
+                        var newRow = "<tr><td>" + name + "</td><td><button class='btn btn-danger' onclick='statGrapher.removeData(this)'>Remove</button></td>";
+                        $("#playerList tbody").append(newRow);
+                        statGrapher.toggleAddActive();
+                    },
+                    error: function () { alert("you are a failure") }
+                });
+            }
+            
         },
 
         graphData: function (attribute) {
@@ -200,6 +207,8 @@
             statGrapher.toggleAddActive();
         },
         switchAttribute: function (i) {
+            $("#attrButton" + i).addClass("btn-warning");
+            $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
             statGrapher.attrIndex = i;
             statGrapher.graphData(statGrapher.hittersAttributes[i]);
         },

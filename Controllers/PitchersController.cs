@@ -230,11 +230,13 @@ namespace MLBApp.Controllers
                     break;
             }
             finalTotals.k9 = 9 *((float)finalTotals.so / (float)finalTotals.ip);
-            finalTotals.obp = (finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hb) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
+            finalTotals.obp = (float)(finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hb) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
             finalTotals.whip = (decimal)((finalTotals.bb + finalTotals.h) / inningsPitched);
-            finalTotals.era = (finalTotals.er / inningsPitched) * 9;
+            finalTotals.era = (float)(finalTotals.er / inningsPitched) * 9;
             finalTotals.avg = Math.Round(finalTotals.avg, 3);
-            finalTotals.era = Math.Round(finalTotals.era, 3);
+            finalTotals.era = Math.Round(finalTotals.era, 2);
+            finalTotals.obp = Math.Round(finalTotals.obp, 3);
+            finalTotals.k9 = Math.Round(finalTotals.k9, 2);
             return finalTotals;
         }
     }
