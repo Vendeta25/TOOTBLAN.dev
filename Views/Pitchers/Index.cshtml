@@ -23,10 +23,10 @@
 <div class="text-center">
     <div class="row">
         <div class="col-3 offset-4">
-            @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new {@class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)" })
+            @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)" })
         </div>
         <div class="col-3">
-            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...",new { @class = "form-control" })
+            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control" })
         </div>
         <div class="col-1">
             <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>
@@ -34,10 +34,10 @@
     </div>
     <div class="row">
         <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
-            <button id="attrButton0" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(0)">ERA</button>
+            <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">ERA</button>
             <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">Strike Outs</button>
             <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">WHIP</button>
-            <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">OBP</button>
+            <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">K/9</button>
             <button id="attrButton4" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(4)">IP</button>
             <button id="attrButton9" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(5)">Hits</button>
             <button id="attrButton5" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(6)">Walks</button>
@@ -83,7 +83,7 @@
 
         data: [],
         colors: [["rgba(173,221,142,.5)", "rgba(49,163,84,1)", "rgba(247,252,185, 1)"], ["rgba(49,130,189,.5)", "rgba(158,202,225,1)", "rgba(222,235,247,1)"], ["rgba(230,85,13,.5)", "rgba(253,174,107,1)", "rgba(254,230,206,1)"]],
-        pitchersAttributes: ["era", "so", "whip", "obp", "ip", "h", "bb", "er", "hb", "hr"],
+        pitchersAttributes: ["era", "so", "whip", "k9", "ip", "h", "bb", "er", "hb", "hr"],
         attrIndex: 0,
         maxPlayers: 3,
         getTeamsList: function () {
@@ -101,7 +101,7 @@
                         $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
                     });
                 },
-                error: function () { alert("you are a failure") }
+                error: function () { alert("Error: Failed to get team list") }
             });
         },
 
@@ -120,12 +120,14 @@
                         $("#dropDownPlayers").append($('<option></option>').text(item.text).val(item.value));
                     });
                 },
-                error: function () { alert("you are a failure") }
+                error: function () { alert("Error: failed to get players list") }
             });
         },
 
         getPlayerData: function (id) {
             var name = $("#dropDownPlayers option:selected").text();
+            $('#btnAddPlayer').attr('disabled', 'disabled');
+            setTimeout(1000);
             $.ajax({
                 type: "GET",
                 url: "Pitchers/GetPlayerData",
@@ -135,12 +137,13 @@
                 success: function (response) {
                     statGrapher.data.push({ name, response });
                     statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex]);
-                    var newRow = "<tr><td>" + name + "</td><td><button onclick='statGrapher.removeData(this)'>Remove</button></td>";
+                    var newRow = "<tr><td>" + name + "</td><td><button class='btn-danger' onclick='statGrapher.removeData(this)'>Remove</button></td>";
                     $("#playerList tbody").append(newRow);
                     statGrapher.toggleAddActive();
                 },
-                error: function () { alert("you are a failure") }
+                error: function () { alert("Error: failed to get player data") }
             });
+
         },
 
         graphData: function (attribute) {
@@ -168,8 +171,8 @@
                                 xAxes: [{
                                     type: "linear",
                                     ticks: {
-                                        precision: 0                                        
-                                        
+                                        precision: 0
+
                                     }
                                 }]
                             }
@@ -199,6 +202,8 @@
 
         },
         switchAttribute: function (i) {
+            $("#attrButton" + i).addClass("btn-warning");
+            $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
             statGrapher.attrIndex = i;
             statGrapher.graphData(statGrapher.pitchersAttributes[i]);
         },
