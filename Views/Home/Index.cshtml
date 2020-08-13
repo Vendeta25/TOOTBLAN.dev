@@ -194,7 +194,7 @@
 
         removeData: function (e) {
 
-            statGrapher.data.splice(e.closest('tr').rowIndex, 1);
+            statGrapher.data.splice(e.closest('tr').rowIndex - 1, 1);
             e.closest('tr').remove();
             statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex]);
             statGrapher.toggleAddActive();
