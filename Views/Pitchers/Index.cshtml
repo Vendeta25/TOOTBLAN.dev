@@ -1,0 +1,222 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    attrButton {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 0px;
+        padding-right: 0px
+    }
+</style>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+    @*<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        //<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">*@
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+<div class="text-center">
+    <div class="row">
+        <div class="col-3 offset-3">
+            @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @onchange = "statGrapher.getPlayersList(this.value)" })
+        </div>
+        <div class="col-3">
+            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...")
+        </div>
+        <div class="col-1">
+            <button id="btnAddPlayer" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+            <button id="attrButton0" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(0)">ERA</button>
+            <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">Strike Outs</button>
+            <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">WHIP</button>
+            <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">OBP</button>
+            <button id="attrButton4" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(4)">IP</button>
+            <button id="attrButton9" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(5)">Hits</button>
+            <button id="attrButton5" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(6)">Walks</button>
+            <button id="attrButton6" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(7)">Earned Runs</button>
+            <button id="attrButton7" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(8)">Hit Batters</button>
+            <button id="attrButton8" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(9)">HR</button>
+        </div>
+
+
+    </div>
+</div>
+<div class="text-center">
+    <div class="row">
+        <div class="col-3">
+            <table id="playerList" class="table table-striped table-sm">
+                <thead>Players</thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-9">
+            <canvas max-height="400" width="400" id="graphCanvas"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    var ctx = $("#graphCanvas");
+    $("#areaSelector").bind("change", function () {
+        debugger;
+        getData($("#areaSelector").val());
+    });
+    var CHART = new Chart(ctx, {
+        type: 'line',
+        responsive: true,
+        data: {
+            datasets: [{
+                data: [],
+                maxTicksLimit: 1000000
+            }]
+        },
+        options: {}
+    });
+
+    var statGrapher = {
+
+        data: [],
+        colors: [["rgba(173,221,142,.5)", "rgba(49,163,84,1)", "rgba(247,252,185, 1)"], ["rgba(49,130,189,.5)", "rgba(158,202,225,1)", "rgba(222,235,247,1)"], ["rgba(230,85,13,.5)", "rgba(253,174,107,1)", "rgba(254,230,206,1)"]],
+        pitchersAttributes: ["era", "so", "whip", "obp", "ip", "h", "bb", "er", "hb", "hr"],
+        attrIndex: 0,
+        maxPlayers: 3,
+        getTeamsList: function () {
+            $.ajax({
+                type: "GET",
+                url: "Home/GetTeamsForYear",
+                data: { year: 2020 },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $("#dropDownTeams").empty();
+                    $("#dropDownTeams").append($('<option></option>').text("...Teams...").val("0"));
+                    $.each(response, function (i, item) {
+
+                        $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
+                    });
+                },
+                error: function () { alert("you are a failure") }
+            });
+        },
+
+        getPlayersList: function (id) {
+            $.ajax({
+                type: "GET",
+                url: "Pitchers/GetPitchersForTeam",
+                data: { teamID: id },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    $("#dropDownPlayers").empty();
+                    $("#dropDownPlayers").append($('<option></option>').text("...Player...").val("0"));
+
+                    $.each(response, function (i, item) {
+                        $("#dropDownPlayers").append($('<option></option>').text(item.text).val(item.value));
+                    });
+                },
+                error: function () { alert("you are a failure") }
+            });
+        },
+
+        getPlayerData: function (id) {
+            var name = $("#dropDownPlayers option:selected").text();
+            $.ajax({
+                type: "GET",
+                url: "Pitchers/GetPlayerData",
+                data: { playerId: id },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    statGrapher.data.push({ name, response });
+                    statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex]);
+                    var newRow = "<tr><td>" + name + "</td><td><button onclick='statGrapher.removeData(this)'>Remove</button></td>";
+                    $("#playerList tbody").append(newRow);
+                    statGrapher.toggleAddActive();
+                },
+                error: function () { alert("you are a failure") }
+            });
+        },
+
+        graphData: function (attribute) {
+            CHART = new Chart(ctx, {
+                type: 'scatter',
+                responsive: true,
+                data: {
+                    datasets: []
+                },
+                options: {}
+            });
+            for (i = 0; i < statGrapher.data.length; i++) {
+                newSet =
+                    {
+                        label: statGrapher.data[i].name,
+                        fill: true,
+                        borderColor: statGrapher.colors[i][1],
+                        backgroundColor: statGrapher.colors[i][0],
+                        pointBackgroundColor: statGrapher.colors[i][2],
+                        showLine: true,
+                        data: [],
+                        options: {
+                            scales: {
+                                xAxes: [{
+                                    type: "linear",
+                                    ticks: {
+                                        precision: 0                                        
+                                        
+                                    }
+                                }]
+                            }
+                        }
+                    };
+
+                for (j = 0; j < statGrapher.data[i].response.length; j++) {
+                    newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: statGrapher.data[i].response[j]["season"] });
+                }
+
+
+
+
+                CHART.data.datasets.push(newSet);
+
+            }
+
+            CHART.update();
+        },
+
+        removeData: function (e) {
+
+            statGrapher.data.splice(e.closest('tr').rowIndex, 1);
+            e.closest('tr').remove();
+            statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex]);
+            statGrapher.toggleAddActive();
+
+        },
+        switchAttribute: function (i) {
+            statGrapher.attrIndex = i;
+            statGrapher.graphData(statGrapher.pitchersAttributes[i]);
+        },
+        toggleAddActive: function () {
+            if (statGrapher.data.length == statGrapher.maxPlayers) {
+                $("#btnAddPlayer").prop('disabled', true);
+            } else {
+                $("#btnAddPlayer").prop('disabled', false);
+
+            }
+        }
+
+    }
+
+
+    $(document).ready(function () {
+        statGrapher.getTeamsList();
+    })
+</script>
