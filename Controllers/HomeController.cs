@@ -86,8 +86,40 @@ namespace MLBApp.Controllers
             }
             return Json(teams);
         }
-    
-    
+
+        public PlayerModel GetHitterData(string playerId)
+        {
+            var hitter = new PlayerModel();
+            var url = "http://lookup-service-prod.mlb.com/json/named.player_info.bam";
+            using (var client = new HttpClient())
+            {
+
+                //Passing service base url  
+                client.BaseAddress = new Uri(url);
+
+                client.DefaultRequestHeaders.Clear();
+                //Define request data format  
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var q = "?sport_code='mlb'&player_id='" + playerId + "'";
+                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
+                var Res = client.GetAsync(q);
+                Res.Wait();
+                var result = Res.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var readString = result.Content.ReadAsStringAsync().Result;
+                    PlayerJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerJSONResponseModel>(readString);
+                    if (playerResponse != null)
+                    {
+                        hitter = playerResponse.response.queryResults.row[0];
+                    }
+
+                }
+
+
+            }
+            return hitter;
+        }
 
         public JsonResult GetHittersForTeam(int teamID)
         {
@@ -110,7 +142,7 @@ namespace MLBApp.Controllers
                 if (result.IsSuccessStatusCode)
                 {
                     var readString = result.Content.ReadAsStringAsync().Result;
-                    PlayerJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerJSONResponseModel>(readString);
+                    PlayerListJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerListJSONResponseModel>(readString);
                     if (playerResponse != null)
                     {
                         players = playerResponse.response.queryResults.row.Where(p => p.position_txt != "P").Select(t => new SelectListItem
@@ -132,21 +164,24 @@ namespace MLBApp.Controllers
         public JsonResult GetPlayerData(string playerId)
         {
             var data = new List<HitterListItemModel>();
+            var player = GetHitterData(playerId);
+            var debutDate = DateTime.Parse(player.pro_debut_date).Year;
             int year = DateTime.Today.Year;
             HitterListItemModel item = new HitterListItemModel();
-            bool run = true;
-            while(run)
+            //bool run = true;
+            while(year >= debutDate)
             {
                 item = GetStatsForYear(year, playerId);
                 if(item != null)
                 {
                     data.Add(item);
-                    year--;
                 }
                 else
                 {
-                    run = false;
+                    data.Add(new HitterListItemModel() { season = year.ToString() });
                 }
+                year--;
+
             };
             data.Reverse();
             return Json(data);

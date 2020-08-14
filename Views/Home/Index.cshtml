@@ -101,7 +101,7 @@
                         $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
                     });
                 },
-                error: function () { alert("you are a failure") }
+                error: function () { alert("Error: failed to get teams") }
             });
         },
 
@@ -120,7 +120,7 @@
                         $("#dropDownPlayers").append($('<option></option>').text(item.text).val(item.value));
                     });
                 },
-                error: function () { alert("you are a failure") }
+                error: function () { alert("Error: failed to get players list") }
             });
         },
 
@@ -144,7 +144,7 @@
                         $("#playerList tbody").append(newRow);
                         statGrapher.toggleAddActive();
                     },
-                    error: function () { alert("you are a failure") }
+                    error: function () { alert("Error: failed to add player") }
                 });
             }
             

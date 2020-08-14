@@ -137,7 +137,7 @@
                 success: function (response) {
                     statGrapher.data.push({ name, response });
                     statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex]);
-                    var newRow = "<tr><td>" + name + "</td><td><button class='btn-danger' onclick='statGrapher.removeData(this)'>Remove</button></td>";
+                    var newRow = "<tr><td>" + name + "</td><td><button class='btn btn-danger' onclick='statGrapher.removeData(this)'>Remove</button></td>";
                     $("#playerList tbody").append(newRow);
                     statGrapher.toggleAddActive();
                 },
