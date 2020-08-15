@@ -174,12 +174,13 @@
                             scales: {
                                 xAxes: [{
                                     type: "linear",
+                                    
                                     ticks: {
                                         stepSize: 1
                                     }
                                 }],
                                 yAxes: [{
-
+                                    
                                 }]
                             }
                         }
@@ -188,7 +189,9 @@
                 for (j = 0; j < statGrapher.data[i].response.length; j++) {
                     newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: parseInt(statGrapher.data[i].response[j]["season"]) });
                 }
+                CHART.options.scales.yAxes[0].scaleLabel.display = true;
 
+                CHART.options.scales.yAxes[0].scaleLabel.labelString = statGrapher.hittersAttributes[statGrapher.attrIndex].toUpperCase();
 
 
 
