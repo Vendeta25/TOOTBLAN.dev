@@ -243,10 +243,10 @@ namespace MLBApp.Controllers
                 {
                     finalTotals.ip += .7m;
                 }
-                finalTotals.hb += finalTotals.hb;
-                finalTotals.h += finalTotals.h;
+                finalTotals.hb += year.hb;
+                finalTotals.h += year.h;
                 finalTotals.season = year.season;
-                finalTotals.team_full = finalTotals.team_full;
+                finalTotals.team_full = year.team_full;
 
             }
 
@@ -264,14 +264,22 @@ namespace MLBApp.Controllers
                     inningsPitched = (double)finalTotals.ip;
                     break;
             }
-            finalTotals.k9 = 9 *((float)finalTotals.so / (float)finalTotals.ip);
             finalTotals.obp = (float)(finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hb) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
             finalTotals.whip = (decimal)((finalTotals.bb + finalTotals.h) / inningsPitched);
             finalTotals.era = (float)(finalTotals.er / inningsPitched) * 9;
+            finalTotals.hr9 = 9 * (float)(finalTotals.hr / inningsPitched);
+            finalTotals.bb9 = 9 * (float)(finalTotals.bb / inningsPitched);
+            finalTotals.k9 = 9 *((float)finalTotals.so / (float)finalTotals.ip);
+            finalTotals.h9 = 9* (float)(finalTotals.h / inningsPitched);
+
             finalTotals.avg = Math.Round(finalTotals.avg, 3);
             finalTotals.era = Math.Round(finalTotals.era, 2);
             finalTotals.obp = Math.Round(finalTotals.obp, 3);
             finalTotals.k9 = Math.Round(finalTotals.k9, 2);
+            finalTotals.hr9 = Math.Round(finalTotals.hr9, 2);
+            finalTotals.bb9 = Math.Round(finalTotals.bb9, 2);
+            finalTotals.h9 = Math.Round(finalTotals.h9, 2);
+
             return finalTotals;
         }
     }

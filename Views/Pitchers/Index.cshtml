@@ -35,15 +35,19 @@
     <div class="row">
         <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
             <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">ERA</button>
-            <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">Strike Outs</button>
-            <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">WHIP</button>
-            <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">K/9</button>
-            <button id="attrButton4" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(4)">IP</button>
-            <button id="attrButton9" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(5)">Hits</button>
-            <button id="attrButton5" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(6)">Walks</button>
-            <button id="attrButton6" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(7)">Earned Runs</button>
-            <button id="attrButton7" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(8)">Hit Batters</button>
-            <button id="attrButton8" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(9)">HR</button>
+            <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">Ks</button>
+            <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">K/9</button>
+            <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">H</button>
+            <button id="attrButton4" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(4)">H/9</button>
+            <button id="attrButton5" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(5)">HR</button>
+            <button id="attrButton6" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(6)">HR/9</button>
+            <button id="attrButton7" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(7)">BB</button>
+            <button id="attrButton8" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(8)">BB/9</button>
+            <button id="attrButton9" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(9)">WHIP</button>
+            <button id="attrButton10" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(10)">IP</button>
+            <button id="attrButton11" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(11)">Earned Runs</button>
+            <button id="attrButton12" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(12)">Hit Batters</button>
+
         </div>
 
 
@@ -83,7 +87,7 @@
 
         data: [],
         colors: [["rgba(173,221,142,.5)", "rgba(49,163,84,1)", "rgba(247,252,185, 1)"], ["rgba(49,130,189,.5)", "rgba(158,202,225,1)", "rgba(222,235,247,1)"], ["rgba(230,85,13,.5)", "rgba(253,174,107,1)", "rgba(254,230,206,1)"]],
-        pitchersAttributes: ["era", "so", "whip", "k9", "ip", "h", "bb", "er", "hb", "hr"],
+        pitchersAttributes: ["era", "so", "k9", "h", "h9", "hr", "hr9", "bb", "bb9", "whip", "ip", "er", "hb"],
         attrIndex: 0,
         maxPlayers: 3,
         getTeamsList: function () {
@@ -182,7 +186,9 @@
                 for (j = 0; j < statGrapher.data[i].response.length; j++) {
                     newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: statGrapher.data[i].response[j]["season"] });
                 }
+                CHART.options.scales.yAxes[0].scaleLabel.display = true;
 
+                CHART.options.scales.yAxes[0].scaleLabel.labelString = statGrapher.pitchersAttributes[statGrapher.attrIndex].toUpperCase();
 
 
 
