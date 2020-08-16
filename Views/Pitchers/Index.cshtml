@@ -150,7 +150,7 @@
 
         },
 
-        graphData: function (attribute) {
+        graphData: function (attribute, mode) {
             CHART.destroy();
             CHART = new Chart(ctx, {
                 type: 'scatter',
@@ -184,7 +184,12 @@
                     };
 
                 for (j = 0; j < statGrapher.data[i].response.length; j++) {
-                    newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: statGrapher.data[i].response[j]["season"] });
+                    switch (mode) {
+                        case "year":
+                            newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: statGrapher.data[i].response[j]["season"] });
+                        default:
+                            newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: i});
+                    }
                 }
                 CHART.options.scales.yAxes[0].scaleLabel.display = true;
 

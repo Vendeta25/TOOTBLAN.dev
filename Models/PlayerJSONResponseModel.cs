@@ -40,7 +40,7 @@ namespace MLBApp.Models
         //public string height_inches { get; set; }
         //public string starter_sw { get; set; }
         //public string jersey_number { get; set; }
-        //public string end_date { get; set; }
+        public string end_date { get; set; }
         //public string name_first { get; set; }
         //public string bats { get; set; }
         //public string team_code { get; set; }

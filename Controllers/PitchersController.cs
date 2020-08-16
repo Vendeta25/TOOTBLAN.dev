@@ -119,7 +119,7 @@ namespace MLBApp.Controllers
         public JsonResult GetPitchersForTeam(int teamID)
         {
             var players = new List<SelectListItem>();
-            var url = "http://lookup-service-prod.mlb.com/json/named.roster_40.bam";
+            var url = "http://lookup-service-prod.mlb.com/json/named.roster_team_alltime.bam";
             using (var client = new HttpClient())
             {
 
@@ -129,7 +129,7 @@ namespace MLBApp.Controllers
                 client.DefaultRequestHeaders.Clear();
                 //Define request data format  
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?team_id='"+ teamID+"'";
+                var q = "?start_season='2020'&end_season='2020'&team_id='" + teamID + "'";
                 //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
                 var Res = client.GetAsync(q);
                 Res.Wait();
@@ -140,9 +140,9 @@ namespace MLBApp.Controllers
                     PlayerListJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerListJSONResponseModel>(readString);
                     if (playerResponse != null)
                     {
-                        players = playerResponse.response.queryResults.row.Where(p => p.position_txt == "P").Select(t => new SelectListItem
+                        players = playerResponse.response.queryResults.row.Where(p => p.primary_position == "P").Select(t => new SelectListItem
                         {
-                            Text = t.name_full,
+                            Text = t.player_first_last_html,
                             Value = t.player_id
 
 

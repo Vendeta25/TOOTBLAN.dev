@@ -19,6 +19,10 @@ namespace MLBApp.Models
             {
                 return token.ToObject<List<T>>();
             }
+            if(token.ToString() == "")
+            {
+                return null;
+            }
             return new List<T> { token.ToObject<T>() };
         }
 
@@ -67,77 +71,77 @@ namespace MLBApp.Models
     {
 
 
-        public string gidp { get; set; }
+        public string? gidp { get; set; }
         [JsonProperty("sac")]
-        public int sac { get; set; }
-        public string np { get; set; }
-        public string sport_code { get; set; }
-        public string hgnd { get; set; }
+        public int? sac { get; set; }
+        public string? np { get; set; }
+        public string? sport_code { get; set; }
+        public string? hgnd { get; set; }
         [JsonProperty("tb")]
-        public int tb { get; set; }
-        public string gidp_opp { get; set; }
-        public string sport_id { get; set; }
+        public int? tb { get; set; }
+        public string? gidp_opp { get; set; }
+        public string? sport_id { get; set; }
 
         [JsonProperty("bb")]
-        public int bb { get; set; }
+        public int? bb { get; set; }
         
         [JsonProperty("avg")]
-        public double avg { get; set; }
+        public double? avg { get; set; }
 
         [JsonProperty("slg")]
-        public double slg { get; set; }
-        public string team_full { get; set; }
+        public double? slg { get; set; }
+        public string? team_full { get; set; }
 
         [JsonProperty("ops")]
-        public double ops { get; set; }
+        public double? ops { get; set; }
         [JsonProperty("hbp")]
-        public int hbp { get; set; }
-        public string league_full { get; set; }
-        public string team_abbrev { get; set; }
-        public string hpop { get; set; }
-        public string cs { get; set; }
-        public string season { get; set; }
+        public int? hbp { get; set; }
+        public string? league_full { get; set; }
+        public string? team_abbrev { get; set; }
+        public string? hpop { get; set; }
+        public string? cs { get; set; }
+        public string? season { get; set; }
         [JsonProperty("sb")]
-        public int sb { get; set; }
-        public string go_ao { get; set; }
-        public string ppa { get; set; }
-        public string player_id { get; set; }
+        public int? sb { get; set; }
+        public string? go_ao { get; set; }
+        public string? ppa { get; set; }
+        public string? player_id { get; set; }
         [JsonProperty("ibb")]
-        public int ibb { get; set; }
-        public string team_id { get; set; }
-        public string roe { get; set; }
-        public string go { get; set; }
+        public int? ibb { get; set; }
+        public string? team_id { get; set; }
+        public string? roe { get; set; }
+        public string? go { get; set; }
         [JsonProperty("hr")]
-        public int hr { get; set; }
+        public int? hr { get; set; }
         [JsonProperty("rbi")]
-        public int rbi { get; set; }
-        public string babip { get; set; }
-        public string lob { get; set; }
-        public string end_date { get; set; }
-        public string xbh { get; set; }
-        public string league_short { get; set; }
+        public int? rbi { get; set; }
+        public string? babip { get; set; }
+        public string? lob { get; set; }
+        public string? end_date { get; set; }
+        public string? xbh { get; set; }
+        public string? league_short { get; set; }
         [JsonProperty("g")]
-        public int g { get; set; }
+        public int? g { get; set; }
         [JsonProperty("d")]
-        public int d { get; set; }
-        public string sport { get; set; }
-        public string team_short { get; set; }
-        public string tpa { get; set; }
+        public int? d { get; set; }
+        public string? sport { get; set; }
+        public string? team_short { get; set; }
+        public string? tpa { get; set; }
         [JsonProperty("h")]
-        public int h { get; set; }
+        public int? h { get; set; }
         [JsonProperty("obp")]
-        public double obp { get; set; }
-        public string hldr { get; set; }
+        public double? obp { get; set; }
+        public string? hldr { get; set; }
         [JsonProperty("t")]
-        public int t { get; set; }
-        public string ao { get; set; }
-        public string r { get; set; }
+        public int? t { get; set; }
+        public string? ao { get; set; }
+        public string? r { get; set; }
 
         [JsonProperty("ab")]
-        public int ab { get; set; }
+        public int? ab { get; set; }
 
         [JsonProperty("so")]
-        public int so { get; set; }
+        public int? so { get; set; }
 
 
 

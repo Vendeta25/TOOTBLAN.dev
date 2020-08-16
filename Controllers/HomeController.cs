@@ -121,10 +121,10 @@ namespace MLBApp.Controllers
             return hitter;
         }
 
-        public JsonResult GetHittersForTeam(int teamID)
+        public JsonResult GetHittersForTeam(int teamID, int year)
         {
             var players = new List<SelectListItem>();
-            var url = "http://lookup-service-prod.mlb.com/json/named.roster_40.bam";
+            var url = "http://lookup-service-prod.mlb.com/json/named.roster_team_alltime.bam";
             using (var client = new HttpClient())
             {
 
@@ -134,7 +134,7 @@ namespace MLBApp.Controllers
                 client.DefaultRequestHeaders.Clear();
                 //Define request data format  
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?team_id='"+ teamID+"'";
+                var q = "?start_season='"+year+"'&end_season='"+ year+"'&team_id='" + teamID+ "'";
                 //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
                 var Res = client.GetAsync(q);
                 Res.Wait();
@@ -145,9 +145,9 @@ namespace MLBApp.Controllers
                     PlayerListJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerListJSONResponseModel>(readString);
                     if (playerResponse != null)
                     {
-                        players = playerResponse.response.queryResults.row.Where(p => p.position_txt != "P").Select(t => new SelectListItem
+                        players = playerResponse.response.queryResults.row.Where(p => p.primary_position != "P").Select(t => new SelectListItem
                         {
-                            Text = t.name_full,
+                            Text = t.player_first_last_html,
                             Value = t.player_id
 
 
@@ -166,7 +166,13 @@ namespace MLBApp.Controllers
             var data = new List<HitterListItemModel>();
             var player = GetHitterData(playerId);
             var debutDate = DateTime.Parse(player.pro_debut_date).Year;
-            int year = DateTime.Today.Year;
+
+            int year = 2020;
+            if(player.end_date != "")
+            {
+                year = DateTime.Parse(player.end_date).Year;
+            }
+            
             HitterListItemModel item = new HitterListItemModel();
             //bool run = true;
             while(year >= debutDate)
@@ -234,34 +240,51 @@ namespace MLBApp.Controllers
 
         private HitterListItemModel CombineHitterStatsForYear(List<HitterListItemModel> stats)
         {
-            HitterListItemModel finalTotals = new HitterListItemModel();
+            HitterListItemModel finalTotals = new HitterListItemModel() {
+                ab = 0,
+                bb = 0,
+                hr = 0,
+                ibb = 0,
+                rbi = 0,
+                hbp = 0,
+                h = 0,
+                sac = 0,
+                t = 0,
+                d = 0,
+                so = 0
+                
+
+
+
+            };
             foreach(HitterListItemModel year in stats)
             {
-                finalTotals.ab += year.ab;
-                finalTotals.bb += year.bb;
-                finalTotals.hr += year.hr;
-                finalTotals.ibb += year.ibb;
-                finalTotals.rbi += year.rbi;
-                finalTotals.h += year.h;
-                finalTotals.sac += year.sac;
-                finalTotals.hbp += year.hbp;
-                finalTotals.t += year.t;
-                finalTotals.d += year.d;
-                finalTotals.so += year.so;
+                finalTotals.ab += year.ab.GetValueOrDefault();
+                finalTotals.bb += year.bb.GetValueOrDefault();
+                finalTotals.hr += year.hr.GetValueOrDefault();
+                finalTotals.ibb += year.ibb.GetValueOrDefault();
+                finalTotals.rbi += year.rbi.GetValueOrDefault();
+                finalTotals.h += year.h.GetValueOrDefault();
+                finalTotals.sac += year.sac.GetValueOrDefault();
+                finalTotals.hbp += year.hbp.GetValueOrDefault();
+                finalTotals.t += year.t.GetValueOrDefault();
+                finalTotals.d += year.d.GetValueOrDefault();
+                finalTotals.so += year.so.GetValueOrDefault();
                 finalTotals.season = year.season;
                 finalTotals.team_full = finalTotals.team_full;
 
-            }
-            int s = finalTotals.h - (finalTotals.hr + finalTotals.t + finalTotals.d);
-            finalTotals.avg = (float)finalTotals.h / (float)finalTotals.ab;
-            finalTotals.obp = (finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hbp) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
-            finalTotals.slg = (s + (finalTotals.d * 2) + (finalTotals.t * 3) + (finalTotals.hr * 4))/finalTotals.ab;
-            finalTotals.ops = finalTotals.obp + finalTotals.slg;
 
-            finalTotals.avg = Math.Round(finalTotals.avg, 3);
-            finalTotals.slg = Math.Round(finalTotals.slg, 3);
-            finalTotals.ops = Math.Round(finalTotals.ops, 3);
-            finalTotals.obp = Math.Round(finalTotals.obp, 3);
+            }
+            int s = finalTotals.h.GetValueOrDefault() - (finalTotals.hr.GetValueOrDefault() + finalTotals.t.GetValueOrDefault() + finalTotals.d.GetValueOrDefault());
+            finalTotals.avg = (float)finalTotals.h.GetValueOrDefault() / (float)finalTotals.ab.GetValueOrDefault();
+            finalTotals.obp = (finalTotals.bb.GetValueOrDefault() + finalTotals.ibb.GetValueOrDefault() + finalTotals.h.GetValueOrDefault() + finalTotals.hbp.GetValueOrDefault()) / (finalTotals.ab.GetValueOrDefault() + finalTotals.ibb.GetValueOrDefault() + finalTotals.bb.GetValueOrDefault() + finalTotals.sac.GetValueOrDefault());
+            finalTotals.slg = (s + (finalTotals.d.GetValueOrDefault() * 2) + (finalTotals.t.GetValueOrDefault() * 3) + (finalTotals.hr.GetValueOrDefault() * 4))/finalTotals.ab.GetValueOrDefault();
+            finalTotals.ops = finalTotals.obp.GetValueOrDefault() + finalTotals.slg.GetValueOrDefault();
+
+            finalTotals.avg = Math.Round(finalTotals.avg.Value, 3);
+            finalTotals.slg = Math.Round(finalTotals.slg.Value, 3);
+            finalTotals.ops = Math.Round(finalTotals.ops.Value, 3);
+            finalTotals.obp = Math.Round(finalTotals.obp.Value, 3);
 
             return finalTotals;
         }
