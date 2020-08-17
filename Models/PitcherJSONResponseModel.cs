@@ -37,7 +37,22 @@ namespace MLBApp.Models
         public string gidp { get; set; }
 
         [JsonProperty("h9")]
-        public double h9 { get; set; }
+        private string h9String { get; set; }
+
+        [JsonProperty("h9Final")]
+        public decimal h9
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(h9String,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { h9String = value.ToString(); }
+        }
 
         [JsonProperty("sac")]
         public int sac { get; set; }
@@ -45,7 +60,22 @@ namespace MLBApp.Models
         public string np { get; set; }
 
         [JsonProperty("tr")]
-        public int tr { get; set; }
+        private string trString { get; set; }
+
+        [JsonProperty("trFinal")]
+        public decimal tr
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(trString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { trString = value.ToString(); }
+        }
 
         [JsonProperty("gf")]
         public int gf { get; set; }
@@ -53,7 +83,22 @@ namespace MLBApp.Models
         public string sport_code { get; set; }
 
         [JsonProperty("bqs")]
-        public int bqs { get; set; }
+        private string bqsString { get; set; }
+
+        [JsonProperty("bqsFinal")]
+        public decimal bqs
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(bqsString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { bqsString = value.ToString(); }
+        }
         public string hgnd { get; set; }
 
         [JsonProperty("sho")]
@@ -65,26 +110,101 @@ namespace MLBApp.Models
         public string sport_id { get; set; }
 
         [JsonProperty("hr9")]
-        public double hr9 { get; set; }
+        private string hr9String { get; set; }
+
+        [JsonProperty("hr9Final")]
+        public decimal hr9
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(hr9String,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { hr9String = value.ToString(); }
+        }
 
         [JsonProperty("sv")]
         public int sv { get; set; }
 
         [JsonProperty("slg")]
-        public decimal slg { get; set; }
+        private string slgString { get; set; }
+
+        [JsonProperty("slgFinal")]
+        public decimal slg
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(slgString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { slgString = value.ToString(); }
+        }
 
         [JsonProperty("bb")]
         public int bb { get; set; }
 
         [JsonProperty("whip")]
-        public decimal whip { get; set; }
+        private string whipString { get; set; }
+
+        [JsonProperty("whipFinal")]
+        public decimal whip
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(whipString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { whipString = value.ToString(); }
+        }
 
         [JsonProperty("avg")]
-        public decimal avg { get; set; }
+        private string avgString { get; set; }
+
+        [JsonProperty("avgFinal")]
+        public decimal avg
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(avgString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { avgString = value.ToString(); }
+        }
         public string team_full { get; set; }
 
         [JsonProperty("ops")]
-        public double ops { get; set; }
+        private string opsString { get; set; }
+
+        [JsonProperty("opsFinal")]
+        public decimal ops
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(opsString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { opsString = value.ToString(); }
+        }
 
         public string league_full { get; set; }
         public string db { get; set; }
@@ -92,7 +212,22 @@ namespace MLBApp.Models
         public string team_abbrev { get; set; }
 
         [JsonProperty("hfly")]
-        public int hfly { get; set; }
+        private string hflyString { get; set; }
+
+        [JsonProperty("hflyFinal")]
+        public int hfly
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(hflyString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { hflyString = value.ToString(); }
+        }
 
         [JsonProperty("so")]
         public int so { get; set; }
@@ -101,7 +236,22 @@ namespace MLBApp.Models
         public int tbf { get; set; }
 
         [JsonProperty("bb9")]
-        public double bb9 { get; set; }
+        private string bb9String { get; set; }
+
+        [JsonProperty("bb9Final")]
+        public decimal bb9
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(bb9String,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { bb9String = value.ToString(); }
+        }
         public string league_id { get; set; }
 
         [JsonProperty("wp")]
@@ -112,40 +262,162 @@ namespace MLBApp.Models
         public string team_seq { get; set; }
 
         [JsonProperty("hpop")]
-        public int hpop { get; set; }
+        private string hpopString { get; set; }
+
+        [JsonProperty("hpopFinal")]
+        public int hpop
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(hpopString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { hpopString = value.ToString(); }
+        }
         public string league { get; set; }
 
         [JsonProperty("hb")]
         public int hb { get; set; }
 
         [JsonProperty("cs")]
-        public int cs { get; set; }
+        private string csString { get; set; }
+
+        [JsonProperty("csFinal")]
+        public int cs
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(csString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { csString = value.ToString(); }
+        }
         public string pgs { get; set; }
         public string season { get; set; }
 
         [JsonProperty("sb")]
-        public int sb { get; set; }
+        private string sbString { get; set; }
+
+        [JsonProperty("sbFinal")]
+        public int sb
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(sbString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { sbString = value.ToString(); }
+        }
         public string go_ao { get; set; }
         public string ppa { get; set; }
 
         [JsonProperty("cg")]
-        public int cg { get; set; }
+        private string cgString { get; set; }
+
+        [JsonProperty("cgFinal")]
+        public int cg
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(cgString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { cgString = value.ToString(); }
+        }
         public string player_id { get; set; }
-        public string gs { get; set; }
+
+        [JsonProperty("gs")]
+        private string gsString { get; set; }
+
+        [JsonProperty("gsFinal")]
+        public int gs
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(gsString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { gsString = value.ToString(); }
+        }
 
         [JsonProperty("ibb")]
-        public int ibb { get; set; }
+        private string ibbString { get; set; }
+
+        [JsonProperty("ibbFinal")]
+        public int ibb
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(ibbString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { ibbString = value.ToString(); }
+        }
         public string team_id { get; set; }
         public string pk { get; set; }
         public string go { get; set; }
 
         [JsonProperty("hr")]
-        public int hr { get; set; }
+        private string hrString { get; set; }
+
+        [JsonProperty("hrFinal")]
+        public int hr
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(hrString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { hrString = value.ToString(); }
+        }
         public string irs { get; set; }
         public string wpct { get; set; }
 
         [JsonProperty("era")]
-        public double era { get; set; }
+        private string eraString { get; set; }
+
+        [JsonProperty("eraFinal")]
+        public decimal era
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(eraString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { eraString = value.ToString(); }
+        }
 
         [JsonProperty("babip")]
         public double babip { get; set; }
@@ -160,20 +432,80 @@ namespace MLBApp.Models
         public string hld { get; set; }
 
         [JsonProperty("k9")]
-        public double k9 { get; set; }
+        private string k9String { get; set; }
+
+        [JsonProperty("k9Final")]
+        public decimal k9
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(k9String,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { k9String = value.ToString(); }
+        }
         public string sport { get; set; }
         public string team_short { get; set; }
         public string l { get; set; }
         public string svo { get; set; }
 
         [JsonProperty("h")]
-        public int h { get; set; }
+        private string hString { get; set; }
+
+        [JsonProperty("hFinal")]
+        public int h
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(hString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { hString = value.ToString(); }
+        }
 
         [JsonProperty("ip")]
-        public decimal ip { get; set; }
+        private string ipString { get; set; }
+
+        [JsonProperty("ipFinal")]
+        public decimal ip
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(ipString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { ipString = value.ToString(); }
+        }
 
         [JsonProperty("obp")]
-        public double obp { get; set; }
+        private string obpString { get; set; }
+
+        [JsonProperty("obpFinal")]
+        public decimal obp
+        {
+            get
+            {
+                decimal result;
+                if (decimal.TryParse(obpString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { obpString = value.ToString(); }
+        }
         public string w { get; set; }
         public string hldr { get; set; }
         public string ao { get; set; }
@@ -186,7 +518,22 @@ namespace MLBApp.Models
         public int ab { get; set; }
 
         [JsonProperty("er")]
-        public int er { get; set; }
+        private string erString { get; set; }
+
+        [JsonProperty("erFinal")]
+        public int er
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(erString,
+                        out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { erString = value.ToString(); }
+        }
 
 
 

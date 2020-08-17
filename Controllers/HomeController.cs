@@ -121,10 +121,10 @@ namespace MLBApp.Controllers
             return hitter;
         }
 
-        public JsonResult GetHittersForTeam(int teamID)
+        public JsonResult GetHittersForTeam(int teamID, int year)
         {
             var players = new List<SelectListItem>();
-            var url = "http://lookup-service-prod.mlb.com/json/named.roster_40.bam";
+            var url = "http://lookup-service-prod.mlb.com/json/named.roster_team_alltime.bam";
             using (var client = new HttpClient())
             {
 
@@ -134,7 +134,7 @@ namespace MLBApp.Controllers
                 client.DefaultRequestHeaders.Clear();
                 //Define request data format  
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?team_id='"+ teamID+"'";
+                var q = "?start_season='"+year+"'&end_season='"+ year+"'&team_id='" + teamID+ "'";
                 //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
                 var Res = client.GetAsync(q);
                 Res.Wait();
@@ -145,9 +145,9 @@ namespace MLBApp.Controllers
                     PlayerListJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerListJSONResponseModel>(readString);
                     if (playerResponse != null)
                     {
-                        players = playerResponse.response.queryResults.row.Where(p => p.position_txt != "P").Select(t => new SelectListItem
+                        players = playerResponse.response.queryResults.row.Where(p => p.primary_position != "P").Select(t => new SelectListItem
                         {
-                            Text = t.name_full,
+                            Text = t.player_first_last_html,
                             Value = t.player_id
 
 
@@ -166,7 +166,13 @@ namespace MLBApp.Controllers
             var data = new List<HitterListItemModel>();
             var player = GetHitterData(playerId);
             var debutDate = DateTime.Parse(player.pro_debut_date).Year;
-            int year = DateTime.Today.Year;
+
+            int year = 2020;
+            if(player.end_date != "")
+            {
+                year = DateTime.Parse(player.end_date).Year;
+            }
+            
             HitterListItemModel item = new HitterListItemModel();
             //bool run = true;
             while(year >= debutDate)
@@ -251,12 +257,13 @@ namespace MLBApp.Controllers
                 finalTotals.season = year.season;
                 finalTotals.team_full = finalTotals.team_full;
 
+
             }
             int s = finalTotals.h - (finalTotals.hr + finalTotals.t + finalTotals.d);
-            finalTotals.avg = (float)finalTotals.h / (float)finalTotals.ab;
-            finalTotals.obp = (finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hbp) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
-            finalTotals.slg = (s + (finalTotals.d * 2) + (finalTotals.t * 3) + (finalTotals.hr * 4))/finalTotals.ab;
-            finalTotals.ops = finalTotals.obp + finalTotals.slg;
+            finalTotals.avg = (decimal)finalTotals.h / (decimal)finalTotals.ab;
+            finalTotals.obp = (decimal)(finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hbp) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
+            finalTotals.slg = (decimal)(s + (finalTotals.d * 2) + (finalTotals.t * 3) + (finalTotals.hr * 4))/finalTotals.ab;
+            finalTotals.ops = (decimal)finalTotals.obp + finalTotals.slg;
 
             finalTotals.avg = Math.Round(finalTotals.avg, 3);
             finalTotals.slg = Math.Round(finalTotals.slg, 3);

@@ -22,18 +22,24 @@
 </head>
 <div class="text-center">
     <div class="row">
-        <div class="col-3 offset-4 ">
+        <div class="col-2 offset-3">
+            @Html.DropDownList("dropDownYears", Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @onchange = "statGrapher.getTeamsList(this.value)" })
+        </div>
+        <div class="col-3 ">
             @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)" })
         </div>
         <div class="col-3">
-            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...",new { @class = "form-control" })
+            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control" })
         </div>
         <div class="col-1">
-            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>  
+            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>
         </div>
     </div>
     <div class="row">
-        <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+        <div class="col-1 offset-3" style="margin-top: 20px; margin-bottom:10px; padding:0px;">
+            <label>Stats:</label>
+        </div>
+        <div class="col  btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
             <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">Average</button>
             <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">On Base %</button>
             <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">Slugging %</button>
@@ -45,8 +51,15 @@
             <button id="attrButton7" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(7)">IBB</button>
             <button id="attrButton8" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(8)">HBP</button>
         </div>
-
-
+    </div>
+    <div class="row">
+        <div class="col-1 offset-3" style="margin-top: 15px; margin-bottom:10px; padding:0px;" >
+            <label>Graph By:</label>
+        </div>
+        <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+            <button id="modeButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchMode(0)">Season</button>
+            <button id="modeButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchMode(1)">Years in League</button>
+        </div>
     </div>
 </div>
 <div class="text-center">
@@ -67,7 +80,6 @@
 <script>
     var ctx = $("#graphCanvas");
     $("#areaSelector").bind("change", function () {
-        debugger;
         getData($("#areaSelector").val());
     });
      var CHART = new Chart(ctx, {
@@ -84,18 +96,22 @@
         data: [],
         colors: [["rgba(173,221,142,.5)", "rgba(49,163,84,1)", "rgba(247,252,185, 1)"], ["rgba(49,130,189,.5)", "rgba(158,202,225,1)", "rgba(222,235,247,1)"], ["rgba(230,85,13,.5)", "rgba(253,174,107,1)", "rgba(254,230,206,1)"]],
         hittersAttributes: ["avg", "obp", "slg", "ops", "h", "ab", "bb", "ibb", "hbp", "hr"],
+        modes: ["season", "year"],
         attrIndex: 0,
+        modeIndex: 0,
         maxPlayers: 3,
-        getTeamsList: function () {
+        getTeamsList: function (year) {
             $.ajax({
                 type: "GET",
                 url: "Home/GetTeamsForYear",
-                data: { year: 2020 },
+                data: { year: year },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     $("#dropDownTeams").empty();
                     $("#dropDownTeams").append($('<option></option>').text("...Teams...").val("0"));
+                    $("#dropDownPlayers").empty();
+                    $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
                     $.each(response, function (i, item) {
 
                         $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
@@ -106,15 +122,16 @@
         },
 
         getPlayersList: function (id) {
+            var year = $("#dropDownYears option:selected").val();
             $.ajax({
                 type: "GET",
                 url: "Home/GetHittersForTeam",
-                data: { teamID: id },
+                data: { teamID: id, year: year },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     $("#dropDownPlayers").empty();
-                    $("#dropDownPlayers").append($('<option></option>').text("...Player...").val("0"));
+                    $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
 
                     $.each(response, function (i, item) {
                         $("#dropDownPlayers").append($('<option></option>').text(item.text).val(item.value));
@@ -139,7 +156,7 @@
                     dataType: "json",
                     success: function (response) {
                         statGrapher.data.push({ name, response });
-                        statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex]);
+                        statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex], statGrapher.modes[statGrapher.modeIndex]);
                         var newRow = "<tr><td>" + name + "</td><td><button class='btn btn-danger' onclick='statGrapher.removeData(this)'>Remove</button></td>";
                         $("#playerList tbody").append(newRow);
                         statGrapher.toggleAddActive();
@@ -150,7 +167,8 @@
             
         },
 
-        graphData: function (attribute) {
+        graphData: function (attribute, mode) {
+            debugger;
             CHART.destroy();
             CHART = new Chart(ctx, {
                 type: 'scatter',
@@ -187,8 +205,20 @@
                     };
 
                 for (j = 0; j < statGrapher.data[i].response.length; j++) {
-                    newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: parseInt(statGrapher.data[i].response[j]["season"]) });
+                    debugger;
+                     switch (mode) {
+                         case "season":
+                             newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: statGrapher.data[i].response[j]["season"] });
+                             CHART.options.scales.xAxes[0].scaleLabel.labelString = "Season";
+                             break;
+
+                         case "year":
+                             newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: j });
+                             CHART.options.scales.xAxes[0].scaleLabel.labelString = "Years in League";
+                             break;
+                    }
                 }
+                CHART.options.scales.xAxes[0].scaleLabel.display = true;
                 CHART.options.scales.yAxes[0].scaleLabel.display = true;
 
                 CHART.options.scales.yAxes[0].scaleLabel.labelString = statGrapher.hittersAttributes[statGrapher.attrIndex].toUpperCase();
@@ -206,14 +236,24 @@
 
             statGrapher.data.splice(e.closest('tr').rowIndex - 1, 1);
             e.closest('tr').remove();
-            statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex]);
+            statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex], statGrapher.modes[statGrapher.modeIndex]);
             statGrapher.toggleAddActive();
         },
         switchAttribute: function (i) {
-            $("#attrButton" + i).addClass("btn-warning");
-            $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
-            statGrapher.attrIndex = i;
-            statGrapher.graphData(statGrapher.hittersAttributes[i]);
+            if (i != statGrapher.attrIndex) {
+                $("#attrButton" + i).addClass("btn-warning");
+                $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
+                statGrapher.attrIndex = i;
+                statGrapher.graphData(statGrapher.hittersAttributes[i], statGrapher.modes[statGrapher.modeIndex]);
+            }
+        },
+        switchMode: function (i) {
+            if (i != statGrapher.modeIndex) {
+                $("#modeButton" + i).addClass("btn-warning");
+                $("#modeButton" + statGrapher.modeIndex).removeClass("btn-warning");
+                statGrapher.modeIndex = i;
+                statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex], statGrapher.modes[i]);
+            }
         },
         toggleAddActive: function () {
             
@@ -229,6 +269,9 @@
 
 
     $(document).ready(function () {
-        statGrapher.getTeamsList();
+        for (var i = 2020; i >= 1900; i--) {
+            $("#dropDownYears").append($('<option></option>').text(i).val(i));
+        }
+        statGrapher.getTeamsList(2020);
     })
 </script>
