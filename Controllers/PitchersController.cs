@@ -116,7 +116,7 @@ namespace MLBApp.Controllers
             return pitcher;
         }
 
-        public JsonResult GetPitchersForTeam(int teamID)
+        public JsonResult GetPitchersForTeam(int teamID, int year)
         {
             var players = new List<SelectListItem>();
             var url = "http://lookup-service-prod.mlb.com/json/named.roster_team_alltime.bam";
@@ -129,7 +129,7 @@ namespace MLBApp.Controllers
                 client.DefaultRequestHeaders.Clear();
                 //Define request data format  
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?start_season='2020'&end_season='2020'&team_id='" + teamID + "'";
+                var q = "?start_season='"+ year +"'&end_season='"+ year +"'&team_id='" + teamID + "'";
                 //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
                 var Res = client.GetAsync(q);
                 Res.Wait();
@@ -161,7 +161,12 @@ namespace MLBApp.Controllers
             var player = GetPitcherData(playerId);
             var debutYear = DateTime.Parse(player.pro_debut_date).Year;
             var data = new List<PitcherListItemModel>();
-            int year = DateTime.Today.Year;
+            int year = 2020;
+            if(player.end_date != "")
+            {
+                year = DateTime.Parse(player.end_date).Year;
+            }
+
             PitcherListItemModel item = new PitcherListItemModel();
             //bool run = true;
             while(year >= debutYear)
@@ -264,13 +269,13 @@ namespace MLBApp.Controllers
                     inningsPitched = (double)finalTotals.ip;
                     break;
             }
-            finalTotals.obp = (float)(finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hb) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
+            finalTotals.obp = (decimal)(finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hb) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
             finalTotals.whip = (decimal)((finalTotals.bb + finalTotals.h) / inningsPitched);
-            finalTotals.era = (float)(finalTotals.er / inningsPitched) * 9;
-            finalTotals.hr9 = 9 * (float)(finalTotals.hr / inningsPitched);
-            finalTotals.bb9 = 9 * (float)(finalTotals.bb / inningsPitched);
-            finalTotals.k9 = 9 *((float)finalTotals.so / (float)finalTotals.ip);
-            finalTotals.h9 = 9* (float)(finalTotals.h / inningsPitched);
+            finalTotals.era = (decimal)(finalTotals.er / inningsPitched) * 9;
+            finalTotals.hr9 = 9 * (decimal)(finalTotals.hr / inningsPitched);
+            finalTotals.bb9 = 9 * (decimal)(finalTotals.bb / inningsPitched);
+            finalTotals.k9 = 9 *(finalTotals.so / finalTotals.ip);
+            finalTotals.h9 = 9* (decimal)(finalTotals.h / inningsPitched);
 
             finalTotals.avg = Math.Round(finalTotals.avg, 3);
             finalTotals.era = Math.Round(finalTotals.era, 2);

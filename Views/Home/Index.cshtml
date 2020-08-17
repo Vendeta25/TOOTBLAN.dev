@@ -36,7 +36,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+        <div class="col-1 offset-3" style="margin-top: 20px; margin-bottom:10px; padding:0px;">
+            <label>Stats:</label>
+        </div>
+        <div class="col  btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
             <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">Average</button>
             <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">On Base %</button>
             <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">Slugging %</button>
@@ -50,7 +53,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+        <div class="col-1 offset-3" style="margin-top: 15px; margin-bottom:10px; padding:0px;" >
+            <label>Graph By:</label>
+        </div>
+        <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
             <button id="modeButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchMode(0)">Season</button>
             <button id="modeButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchMode(1)">Years in League</button>
         </div>
@@ -74,7 +80,6 @@
 <script>
     var ctx = $("#graphCanvas");
     $("#areaSelector").bind("change", function () {
-        debugger;
         getData($("#areaSelector").val());
     });
      var CHART = new Chart(ctx, {
@@ -96,7 +101,6 @@
         modeIndex: 0,
         maxPlayers: 3,
         getTeamsList: function (year) {
-            debugger;
             $.ajax({
                 type: "GET",
                 url: "Home/GetTeamsForYear",
@@ -116,7 +120,6 @@
         },
 
         getPlayersList: function (id) {
-            debugger;
             var year = $("#dropDownYears option:selected").val();
             $.ajax({
                 type: "GET",
@@ -235,16 +238,20 @@
             statGrapher.toggleAddActive();
         },
         switchAttribute: function (i) {
-            $("#attrButton" + i).addClass("btn-warning");
-            $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
-            statGrapher.attrIndex = i;
-            statGrapher.graphData(statGrapher.hittersAttributes[i], statGrapher.modes[statGrapher.modeIndex]);
+            if (i != statGrapher.attrIndex) {
+                $("#attrButton" + i).addClass("btn-warning");
+                $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
+                statGrapher.attrIndex = i;
+                statGrapher.graphData(statGrapher.hittersAttributes[i], statGrapher.modes[statGrapher.modeIndex]);
+            }
         },
         switchMode: function (i) {
-            $("#modeButton" + i).addClass("btn-warning");
-            $("#modeButton" + statGrapher.modeIndex).removeClass("btn-warning");
-            statGrapher.modeIndex = i;
-            statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex], statGrapher.modes[i]);
+            if (i != statGrapher.modeIndex) {
+                $("#modeButton" + i).addClass("btn-warning");
+                $("#modeButton" + statGrapher.modeIndex).removeClass("btn-warning");
+                statGrapher.modeIndex = i;
+                statGrapher.graphData(statGrapher.hittersAttributes[statGrapher.attrIndex], statGrapher.modes[i]);
+            }
         },
         toggleAddActive: function () {
             

@@ -240,51 +240,35 @@ namespace MLBApp.Controllers
 
         private HitterListItemModel CombineHitterStatsForYear(List<HitterListItemModel> stats)
         {
-            HitterListItemModel finalTotals = new HitterListItemModel() {
-                ab = 0,
-                bb = 0,
-                hr = 0,
-                ibb = 0,
-                rbi = 0,
-                hbp = 0,
-                h = 0,
-                sac = 0,
-                t = 0,
-                d = 0,
-                so = 0
-                
-
-
-
-            };
+            HitterListItemModel finalTotals = new HitterListItemModel();
             foreach(HitterListItemModel year in stats)
             {
-                finalTotals.ab += year.ab.GetValueOrDefault();
-                finalTotals.bb += year.bb.GetValueOrDefault();
-                finalTotals.hr += year.hr.GetValueOrDefault();
-                finalTotals.ibb += year.ibb.GetValueOrDefault();
-                finalTotals.rbi += year.rbi.GetValueOrDefault();
-                finalTotals.h += year.h.GetValueOrDefault();
-                finalTotals.sac += year.sac.GetValueOrDefault();
-                finalTotals.hbp += year.hbp.GetValueOrDefault();
-                finalTotals.t += year.t.GetValueOrDefault();
-                finalTotals.d += year.d.GetValueOrDefault();
-                finalTotals.so += year.so.GetValueOrDefault();
+                finalTotals.ab += year.ab;
+                finalTotals.bb += year.bb;
+                finalTotals.hr += year.hr;
+                finalTotals.ibb += year.ibb;
+                finalTotals.rbi += year.rbi;
+                finalTotals.h += year.h;
+                finalTotals.sac += year.sac;
+                finalTotals.hbp += year.hbp;
+                finalTotals.t += year.t;
+                finalTotals.d += year.d;
+                finalTotals.so += year.so;
                 finalTotals.season = year.season;
                 finalTotals.team_full = finalTotals.team_full;
 
 
             }
-            int s = finalTotals.h.GetValueOrDefault() - (finalTotals.hr.GetValueOrDefault() + finalTotals.t.GetValueOrDefault() + finalTotals.d.GetValueOrDefault());
-            finalTotals.avg = (float)finalTotals.h.GetValueOrDefault() / (float)finalTotals.ab.GetValueOrDefault();
-            finalTotals.obp = (finalTotals.bb.GetValueOrDefault() + finalTotals.ibb.GetValueOrDefault() + finalTotals.h.GetValueOrDefault() + finalTotals.hbp.GetValueOrDefault()) / (finalTotals.ab.GetValueOrDefault() + finalTotals.ibb.GetValueOrDefault() + finalTotals.bb.GetValueOrDefault() + finalTotals.sac.GetValueOrDefault());
-            finalTotals.slg = (s + (finalTotals.d.GetValueOrDefault() * 2) + (finalTotals.t.GetValueOrDefault() * 3) + (finalTotals.hr.GetValueOrDefault() * 4))/finalTotals.ab.GetValueOrDefault();
-            finalTotals.ops = finalTotals.obp.GetValueOrDefault() + finalTotals.slg.GetValueOrDefault();
+            int s = finalTotals.h - (finalTotals.hr + finalTotals.t + finalTotals.d);
+            finalTotals.avg = (decimal)finalTotals.h / (decimal)finalTotals.ab;
+            finalTotals.obp = (decimal)(finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hbp) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
+            finalTotals.slg = (decimal)(s + (finalTotals.d * 2) + (finalTotals.t * 3) + (finalTotals.hr * 4))/finalTotals.ab;
+            finalTotals.ops = (decimal)finalTotals.obp + finalTotals.slg;
 
-            finalTotals.avg = Math.Round(finalTotals.avg.Value, 3);
-            finalTotals.slg = Math.Round(finalTotals.slg.Value, 3);
-            finalTotals.ops = Math.Round(finalTotals.ops.Value, 3);
-            finalTotals.obp = Math.Round(finalTotals.obp.Value, 3);
+            finalTotals.avg = Math.Round(finalTotals.avg, 3);
+            finalTotals.slg = Math.Round(finalTotals.slg, 3);
+            finalTotals.ops = Math.Round(finalTotals.ops, 3);
+            finalTotals.obp = Math.Round(finalTotals.obp, 3);
 
             return finalTotals;
         }

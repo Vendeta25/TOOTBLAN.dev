@@ -22,7 +22,10 @@
 </head>
 <div class="text-center">
     <div class="row">
-        <div class="col-3 offset-4">
+        <div class="col-2 offset-3">
+            @Html.DropDownList("dropDownYears", Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @onchange = "statGrapher.getTeamsList(this.value)" })
+        </div>
+        <div class="col-3">
             @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)" })
         </div>
         <div class="col-3">
@@ -33,7 +36,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col offset-4 btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+        <div class="col-1 offset-3" style="margin-top: 20px; margin-bottom:10px; text-align:center;"  >
+            <label>Stats:</label>
+        </div>
+        <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
             <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">ERA</button>
             <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">Ks</button>
             <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">K/9</button>
@@ -49,8 +55,15 @@
             <button id="attrButton12" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(12)">Hit Batters</button>
 
         </div>
-
-
+    </div>
+    <div class="row">
+        <div class="col-1 offset-3" style="margin-top: 15px; margin-bottom:10px; text-align:center; padding:0px;" >
+            <label>Graph By:</label>
+        </div>
+        <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+            <button id="modeButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchMode(0)">Season</button>
+            <button id="modeButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchMode(1)">Years in League</button>
+        </div>
     </div>
 </div>
 <div class="text-center">
@@ -88,13 +101,16 @@
         data: [],
         colors: [["rgba(173,221,142,.5)", "rgba(49,163,84,1)", "rgba(247,252,185, 1)"], ["rgba(49,130,189,.5)", "rgba(158,202,225,1)", "rgba(222,235,247,1)"], ["rgba(230,85,13,.5)", "rgba(253,174,107,1)", "rgba(254,230,206,1)"]],
         pitchersAttributes: ["era", "so", "k9", "h", "h9", "hr", "hr9", "bb", "bb9", "whip", "ip", "er", "hb"],
+        modes: ["season", "year"],
         attrIndex: 0,
         maxPlayers: 3,
-        getTeamsList: function () {
+        modeIndex: 0,
+        getTeamsList: function (year) {
+            var year = 
             $.ajax({
                 type: "GET",
                 url: "Home/GetTeamsForYear",
-                data: { year: 2020 },
+                data: { year: year },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -110,10 +126,12 @@
         },
 
         getPlayersList: function (id) {
+            var year = $("#dropDownYears option:selected").val();
+
             $.ajax({
                 type: "GET",
                 url: "Pitchers/GetPitchersForTeam",
-                data: { teamID: id },
+                data: { teamID: id, year: year },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -140,7 +158,7 @@
                 dataType: "json",
                 success: function (response) {
                     statGrapher.data.push({ name, response });
-                    statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex]);
+                    statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex], statGrapher.modes[statGrapher.modeIndex]);
                     var newRow = "<tr><td>" + name + "</td><td><button class='btn btn-danger' onclick='statGrapher.removeData(this)'>Remove</button></td>";
                     $("#playerList tbody").append(newRow);
                     statGrapher.toggleAddActive();
@@ -185,10 +203,12 @@
 
                 for (j = 0; j < statGrapher.data[i].response.length; j++) {
                     switch (mode) {
-                        case "year":
+                        case "season":
                             newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: statGrapher.data[i].response[j]["season"] });
-                        default:
-                            newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: i});
+                            break;
+                        case "year":
+                            newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: j });
+                            break;
                     }
                 }
                 CHART.options.scales.yAxes[0].scaleLabel.display = true;
@@ -213,10 +233,20 @@
 
         },
         switchAttribute: function (i) {
-            $("#attrButton" + i).addClass("btn-warning");
-            $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
-            statGrapher.attrIndex = i;
-            statGrapher.graphData(statGrapher.pitchersAttributes[i]);
+            if (i != statGrapher.attrIndex) {
+                $("#attrButton" + i).addClass("btn-warning");
+                $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
+                statGrapher.attrIndex = i;
+                statGrapher.graphData(statGrapher.pitchersAttributes[i], statGrapher.modes[statGrapher.modeIndex]);
+            }
+        },
+        switchMode: function (i) {
+            if (i != statGrapher.modeIndex) {
+                $("#modeButton" + i).addClass("btn-warning");
+                $("#modeButton" + statGrapher.modeIndex).removeClass("btn-warning");
+                statGrapher.modeIndex = i;
+                statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex], statGrapher.modes[i]);
+            }
         },
         toggleAddActive: function () {
             if (statGrapher.data.length == statGrapher.maxPlayers) {
@@ -231,6 +261,9 @@
 
 
     $(document).ready(function () {
-        statGrapher.getTeamsList();
+        for (var i = 2020; i >= 1900; i--) {
+            $("#dropDownYears").append($('<option></option>').text(i).val(i));
+        }
+        statGrapher.getTeamsList(2020);
     })
 </script>
