@@ -110,6 +110,8 @@
                 success: function (response) {
                     $("#dropDownTeams").empty();
                     $("#dropDownTeams").append($('<option></option>').text("...Teams...").val("0"));
+                    $("#dropDownPlayers").empty();
+                    $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
                     $.each(response, function (i, item) {
 
                         $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
@@ -129,7 +131,7 @@
                 dataType: "json",
                 success: function (response) {
                     $("#dropDownPlayers").empty();
-                    $("#dropDownPlayers").append($('<option></option>').text("...Player...").val("0"));
+                    $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
 
                     $.each(response, function (i, item) {
                         $("#dropDownPlayers").append($('<option></option>').text(item.text).val(item.value));
