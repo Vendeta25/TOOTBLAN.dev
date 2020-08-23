@@ -100,7 +100,7 @@
 
         data: [],
         colors: [["rgba(173,221,142,.5)", "rgba(49,163,84,1)", "rgba(247,252,185, 1)"], ["rgba(49,130,189,.5)", "rgba(158,202,225,1)", "rgba(222,235,247,1)"], ["rgba(230,85,13,.5)", "rgba(253,174,107,1)", "rgba(254,230,206,1)"]],
-        pitchersAttributes: ["era", "so", "k9", "h", "h9", "hr", "hr9", "bb", "bb9", "whip", "ip", "er", "hb"],
+        pitchersAttributes: ["earnedRunAverage", "strikeOuts", "strikeOutsPer9", "hits", "hitsPer9", "homeRuns", "homeRunsPer9", "walks", "walksPer9", "whip", "inningsPitched", "earnedRuns", "hitBatters"],
         modes: ["season", "year"],
         attrIndex: 0,
         maxPlayers: 3,
@@ -154,7 +154,7 @@
             setTimeout(1000);
             $.ajax({
                 type: "GET",
-                url: "Pitchers/GetPlayerData",
+                url: "Pitchers/GetPitcherData",
                 data: { playerId: id },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

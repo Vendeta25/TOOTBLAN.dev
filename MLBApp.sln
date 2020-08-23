@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLBApp", "MLBApp.csproj", "{870A5C4E-75B0-4733-9B06-20C07FB9CEDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FARTSLAM", "FARTSLAM.csproj", "{870A5C4E-75B0-4733-9B06-20C07FB9CEDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

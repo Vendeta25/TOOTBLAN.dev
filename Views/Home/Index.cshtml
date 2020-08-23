@@ -82,7 +82,7 @@
     $("#areaSelector").bind("change", function () {
         getData($("#areaSelector").val());
     });
-     var CHART = new Chart(ctx, {
+    var CHART = new Chart(ctx, {
         type: 'scatter',
         responsive: true,
         data: {
@@ -95,7 +95,7 @@
 
         data: [],
         colors: [["rgba(173,221,142,.5)", "rgba(49,163,84,1)", "rgba(247,252,185, 1)"], ["rgba(49,130,189,.5)", "rgba(158,202,225,1)", "rgba(222,235,247,1)"], ["rgba(230,85,13,.5)", "rgba(253,174,107,1)", "rgba(254,230,206,1)"]],
-        hittersAttributes: ["avg", "obp", "slg", "ops", "h", "ab", "bb", "ibb", "hbp", "hr"],
+        hittersAttributes: ["battingAverage", "onBasePercentage", "sluggingPercentage", "onBasePlus", "hits", "atBats", "walks", "intentionalWalks", "hitByPitch", "homeRuns"],
         modes: ["season", "year"],
         attrIndex: 0,
         modeIndex: 0,
@@ -113,7 +113,6 @@
                     $("#dropDownPlayers").empty();
                     $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
                     $.each(response, function (i, item) {
-
                         $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
                     });
                 },
@@ -126,7 +125,7 @@
             $.ajax({
                 type: "GET",
                 url: "Home/GetHittersForTeam",
-                data: { teamID: id, year: year },
+                data: { teamId: id, year: year },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -150,7 +149,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "Home/GetPlayerData",
+                    url: "Home/GetHitterData",
                     data: { playerId: id },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -168,7 +167,6 @@
         },
 
         graphData: function (attribute, mode) {
-            debugger;
             CHART.destroy();
             CHART = new Chart(ctx, {
                 type: 'scatter',
@@ -205,7 +203,6 @@
                     };
 
                 for (j = 0; j < statGrapher.data[i].response.length; j++) {
-                    debugger;
                      switch (mode) {
                          case "season":
                              newSet.data.push({ y: statGrapher.data[i].response[j][attribute], x: statGrapher.data[i].response[j]["season"] });

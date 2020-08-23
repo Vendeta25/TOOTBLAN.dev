@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MLBApp.Data;
+using FARTSLAM.Data;
+using FARTSLAM.Models;
+using FARTSLAM.Models.Entities;
 
-namespace MLBApp.Controllers
+namespace FARTSLAM.Controllers
 {
     public class CovidController : Controller
     {
         private FARTSLAMDBContext db;
+
         
         public CovidController() {
             this.db = new FARTSLAMDBContext();
@@ -18,7 +21,10 @@ namespace MLBApp.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            CovidOptOutViewModel vm = new CovidOptOutViewModel();
+
+
+            return View(vm);
         }
     }
 }

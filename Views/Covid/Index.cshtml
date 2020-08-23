@@ -1,4 +1,6 @@
-﻿
+﻿@using FARTSLAM.Models
+@using FARTSLAM.Models.Entities
+@model CovidOptOutViewModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -16,3 +18,31 @@
     </head>
 <h1>Index</h1>
 
+<div class="text-center">
+    <div class="row">
+        <div class="col-9">
+            <canvas max-height="400" width="400" id="graphCanvas"></canvas>
+        </div>
+    </div>
+    <div class="row">
+        <table>
+
+        
+        </table>
+    </div>
+</div>
+
+<script>
+    var ctx = $("#graphCanvas");
+    $("#areaSelector").bind("change", function () {
+        getData($("#areaSelector").val());
+    });
+    var CHART = new Chart(ctx, {
+        type: 'doughnut',
+        responsive: true,
+        data: {
+            datasets: []
+        },
+        options: {}
+    });
+</script>

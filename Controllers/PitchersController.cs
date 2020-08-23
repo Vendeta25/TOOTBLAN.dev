@@ -11,18 +11,21 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using MLBApp.Models;
+using FARTSLAM.Models;
+using FARTSLAM.Business;
 
-namespace MLBApp.Controllers
+namespace FARTSLAM.Controllers
 {
-    
+
     public class PitchersController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IStatRetreiver _stats;
 
-        public PitchersController(ILogger<HomeController> logger)
+        public PitchersController(ILogger<HomeController> logger, IStatRetreiver stats)
         {
             _logger = logger;
+            _stats = stats;
         }
 
         public IActionResult Index()
@@ -41,251 +44,61 @@ namespace MLBApp.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public JsonResult GetTeamsForYear(int year)
+        public async Task<JsonResult> GetTeamsForYear(int year)
         {
 
-            var teams = new List<SelectListItem>();
-            var url = "http://lookup-service-prod.mlb.com/json/named.team_all_season.bam";
-            using (var client = new HttpClient())
+            var teams = await _stats.GetTeamsForYear(year);
+            var list = teams.Select(team => new SelectListItem
             {
-
-                //Passing service base url  
-                client.BaseAddress = new Uri(url);
-
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format  
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?sport_code='mlb'&all_star_sw='N'&sort_order='name_asc'&season='" + year +"'";
-                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
-                var Res = client.GetAsync(q);
-                Res.Wait();
-                var result = Res.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readString = result.Content.ReadAsStringAsync().Result;
-                    TeamJSONResponseModel teamResponse = JsonConvert.DeserializeObject<TeamJSONResponseModel>(readString);
-                    if(teamResponse != null)
-                    {
-                        teams = teamResponse.response.teamQueryResults.row.Select(t => new SelectListItem
-                        {
-                            Text = t.name_display_full,
-                            Value = t.team_id
-
-
-                        }).OrderBy(cn => cn.Text).ToList();
-                    }
-
-            }
-
-            
-            }
-            return Json(teams);
-        }
-    
-        public PlayerModel GetPitcherData(string playerId)
-        {
-            var pitcher = new PlayerModel();
-            var url = "http://lookup-service-prod.mlb.com/json/named.player_info.bam";
-            using (var client = new HttpClient())
-            {
-
-                //Passing service base url  
-                client.BaseAddress = new Uri(url);
-
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format  
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?sport_code='mlb'&player_id='" + playerId + "'";
-                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
-                var Res = client.GetAsync(q);
-                Res.Wait();
-                var result = Res.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readString = result.Content.ReadAsStringAsync().Result;
-                    PlayerJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerJSONResponseModel>(readString);
-                    if (playerResponse != null)
-                    {
-                        pitcher = playerResponse.response.queryResults.row[0];
-                    }
-
-                }
-
-
-            }
-            return pitcher;
+                Value = team.team_id,
+                Text = team.name_display_full
+            }).OrderBy(team => team.Text);
+            return Json(list);
         }
 
-        public JsonResult GetPitchersForTeam(int teamID, int year)
+
+        public async Task<JsonResult> GetPitchersForTeam(int teamId, int year)
         {
-            var players = new List<SelectListItem>();
-            var url = "http://lookup-service-prod.mlb.com/json/named.roster_team_alltime.bam";
-            using (var client = new HttpClient())
+            var players = await _stats.GetPlayersForTeam(teamId, year, true);
+            var list = players.Select(p => new SelectListItem
             {
-
-                //Passing service base url  
-                client.BaseAddress = new Uri(url);
-
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format  
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?start_season='"+ year +"'&end_season='"+ year +"'&team_id='" + teamID + "'";
-                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
-                var Res = client.GetAsync(q);
-                Res.Wait();
-                var result = Res.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readString = result.Content.ReadAsStringAsync().Result;
-                    PlayerListJSONResponseModel playerResponse = JsonConvert.DeserializeObject<PlayerListJSONResponseModel>(readString);
-                    if (playerResponse != null)
-                    {
-                        players = playerResponse.response.queryResults.row.Where(p => p.primary_position == "P").Select(t => new SelectListItem
-                        {
-                            Text = t.player_first_last_html,
-                            Value = t.player_id
-
-
-                        }).OrderBy(cn => cn.Text).ToList();
-                    }
-
-                }
-
-
-            }
-            return Json(players);
+                Text = p.player_first_last_html,
+                Value = p.player_id
+            }).OrderBy(p => p.Text);
+            return Json(list);
         }
 
-        public JsonResult GetPlayerData(string playerId)
+        public async Task<JsonResult> GetPitcherData(int playerId)
         {
-            var player = GetPitcherData(playerId);
+            var player = await _stats.GetPlayer(playerId);
             var debutYear = DateTime.Parse(player.pro_debut_date).Year;
-            var data = new List<PitcherListItemModel>();
+            var data = new List<Pitcher>();
             int year = 2020;
-            if(player.end_date != "")
+            if (player.end_date != "")
             {
                 year = DateTime.Parse(player.end_date).Year;
             }
 
-            PitcherListItemModel item = new PitcherListItemModel();
-            //bool run = true;
-            while(year >= debutYear)
+            var result = new List<Pitcher>();
+            while (year >= debutYear)
             {
-                item = GetStatsForYear(year, playerId);
-                if(item != null)
+                result = await _stats.GetPitcherData(playerId, year);
+                if (result != null)
                 {
-                    data.Add(item);
+                    if (result.Count > 1)
+                        data.Add(_stats.CombinePitcherData(result));
+                    else
+                        data.Add(result.FirstOrDefault());
                 }
                 else
                 {
-                    data.Add(new PitcherListItemModel() { season = year.ToString() });
+                    data.Add(new Pitcher() { season = year.ToString() });
                 }
                 year--;
 
             };
             data.Reverse();
             return Json(data);
-        }
-
-        public PitcherListItemModel GetStatsForYear(int year, string playerID)
-        {
-            PitcherListItemModel yearData = null;
-            var url = "http://lookup-service-prod.mlb.com/json/named.sport_pitching_tm.bam";
-            using (var client = new HttpClient())
-            {
-
-                //Passing service base url  
-                client.BaseAddress = new Uri(url);
-
-                client.DefaultRequestHeaders.Clear();
-                //Define request data format  
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var q = "?league_list_id='mlb'&game_type='R'&player_id='" + playerID + "'&season='" + year + "'";
-                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
-                var Res = client.GetAsync(q);
-                Res.Wait();
-                var result = Res.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readString = result.Content.ReadAsStringAsync().Result;
-                    PitcherJSONResponseModel statsResponse = JsonConvert.DeserializeObject<PitcherJSONResponseModel>(readString);
-                    if (statsResponse != null)
-                    {
-                        //combine yearly totals for both teams here
-                        if(Int64.Parse(statsResponse.response.queryResults.totalSize) > 1)
-                        {
-                            yearData = CombinePitcherStatsForYear(statsResponse.response.queryResults.row);
-                        }
-                        //single team for a year
-                        else if(Int64.Parse(statsResponse.response.queryResults.totalSize) == 1)
-                        {
-                            yearData = statsResponse.response.queryResults.row[0];
-
-                        }
-                    }
-
-
-                }
-
-            }
-
-            return yearData;
-        }
-
-        private PitcherListItemModel CombinePitcherStatsForYear(List<PitcherListItemModel> stats)
-        {
-            PitcherListItemModel finalTotals = new PitcherListItemModel();
-            foreach(PitcherListItemModel year in stats)
-            {
-                finalTotals.ab += year.ab;
-                finalTotals.bb += year.bb;
-                finalTotals.hr += year.hr;
-                finalTotals.ibb += year.ibb;
-                finalTotals.so += year.so;
-                finalTotals.er += year.er;
-                finalTotals.ip += year.ip;
-                if(finalTotals.ip - Math.Truncate(finalTotals.ip) >= 0.3m)
-                {
-                    finalTotals.ip += .7m;
-                }
-                finalTotals.hb += year.hb;
-                finalTotals.h += year.h;
-                finalTotals.season = year.season;
-                finalTotals.team_full = year.team_full;
-
-            }
-
-            double inningsPitched = 0;
-            double deci = (double)(finalTotals.ip - Math.Truncate(finalTotals.ip));
-            switch (deci)
-            {
-                case .1:
-                    inningsPitched = (double)Math.Truncate(finalTotals.ip) + .33;
-                    break;
-                case .2:
-                    inningsPitched = (double)Math.Truncate(finalTotals.ip) + .66;
-                    break;
-                case 0:
-                    inningsPitched = (double)finalTotals.ip;
-                    break;
-            }
-            finalTotals.obp = (decimal)(finalTotals.bb + finalTotals.ibb + finalTotals.h + finalTotals.hb) / (finalTotals.ab + finalTotals.ibb + finalTotals.bb + finalTotals.sac);
-            finalTotals.whip = (decimal)((finalTotals.bb + finalTotals.h) / inningsPitched);
-            finalTotals.era = (decimal)(finalTotals.er / inningsPitched) * 9;
-            finalTotals.hr9 = 9 * (decimal)(finalTotals.hr / inningsPitched);
-            finalTotals.bb9 = 9 * (decimal)(finalTotals.bb / inningsPitched);
-            finalTotals.k9 = 9 *(finalTotals.so / finalTotals.ip);
-            finalTotals.h9 = 9* (decimal)(finalTotals.h / inningsPitched);
-
-            finalTotals.avg = Math.Round(finalTotals.avg, 3);
-            finalTotals.era = Math.Round(finalTotals.era, 2);
-            finalTotals.obp = Math.Round(finalTotals.obp, 3);
-            finalTotals.k9 = Math.Round(finalTotals.k9, 2);
-            finalTotals.hr9 = Math.Round(finalTotals.hr9, 2);
-            finalTotals.bb9 = Math.Round(finalTotals.bb9, 2);
-            finalTotals.h9 = Math.Round(finalTotals.h9, 2);
-
-            return finalTotals;
         }
     }
 }
