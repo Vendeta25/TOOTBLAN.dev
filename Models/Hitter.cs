@@ -126,7 +126,7 @@ namespace FARTSLAM.Models
         public string sport_id { get; set; }
 
         [JsonProperty("team_full")]
-        public string FullTeamName { get; set; }
+        public string team_full { get; set; }
         [JsonProperty("cs")]
         public string cs { get; set; }
         [JsonProperty("season")]

@@ -29,10 +29,10 @@
             @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)" })
         </div>
         <div class="col-3">
-            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control" })
+            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control"})
         </div>
         <div class="col-1">
-            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>
+            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())" disabled>Add</button>
         </div>
     </div>
     <div class="row">
@@ -118,6 +118,7 @@
                     $("#dropDownTeams").append($('<option></option>').text("...Teams...").val("0"));
                     $("#dropDownPlayers").empty();
                     $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
+                    statGrapher.toggleAddActive();
                     $.each(response, function (i, item) {
 
                         $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
@@ -139,6 +140,7 @@
                 success: function (response) {
                     $("#dropDownPlayers").empty();
                     $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
+                    statGrapher.toggleAddActive();
 
                     $.each(response, function (i, item) {
                         $("#dropDownPlayers").append($('<option></option>').text(item.text).val(item.value));
@@ -178,7 +180,24 @@
                 data: {
                     datasets: []
                 },
-                options: {}
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            title: function (tooltipItem, data) {
+                                var name = statGrapher.data[tooltipItem[0].datasetIndex].name;
+                                return name;
+                            },
+                            label: function (tooltipItem, data) {
+                                var stat = tooltipItem.yLabel.toString();
+                                return stat;
+                            },
+                            afterLabel: function (tooltipItem, data) {
+                                var team = statGrapher.data[tooltipItem.datasetIndex].response[tooltipItem.index]["team_short"].split(" ");
+                                return team;
+                            }
+                        },
+                    }
+                }
             });
             for (i = 0; i < statGrapher.data.length; i++) {
                 newSet =
@@ -199,7 +218,8 @@
 
                                     }
                                 }]
-                            }
+                            },
+                            
                         }
                     };
 
@@ -251,7 +271,8 @@
             }
         },
         toggleAddActive: function () {
-            if (statGrapher.data.length == statGrapher.maxPlayers) {
+            var playerSelected = $("#dropDownPlayers option:selected").val() != 0;
+            if (statGrapher.data.length == statGrapher.maxPlayers && playerSelected) {
                 $("#btnAddPlayer").prop('disabled', true);
             } else {
                 $("#btnAddPlayer").prop('disabled', false);

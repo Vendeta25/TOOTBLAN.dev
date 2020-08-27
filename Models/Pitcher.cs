@@ -41,7 +41,7 @@ namespace FARTSLAM.Models
         private string h9 { get; set; }
 
         [JsonProperty("sac")]
-        public int sac { get; set; }
+        public string sac { get; set; }
 
         [JsonProperty("np")]
         public string np { get; set; }
@@ -271,6 +271,20 @@ namespace FARTSLAM.Models
             
         }
 
+        [JsonProperty("Sac Flys")]
+        public int SacFlys
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(sac, out result))
+                    return result;
+                else
+                    return 0;
+            }
+            set { sac = value.ToString(); }
+
+        }
 
         [JsonProperty("SluggingPercentage")]
         public decimal SluggingPercentage

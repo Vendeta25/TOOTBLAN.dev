@@ -104,10 +104,7 @@ namespace FARTSLAM.Controllers
                         data.Add(item.FirstOrDefault());
                     }
                 }
-                else
-                {
-                    data.Add(new Hitter() { season = year.ToString() });
-                }
+                
                 year--;
 
             };

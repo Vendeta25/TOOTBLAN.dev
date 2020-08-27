@@ -30,13 +30,13 @@ namespace FARTSLAM.Business
                 finalTotals.Doubles += year.Doubles;
                 finalTotals.StrikeOuts += year.StrikeOuts;
                 finalTotals.season = year.season;
-                finalTotals.FullTeamName = year.FullTeamName;
                 finalTotals.Games += year.Games;
                 finalTotals.StolenBases += year.StolenBases;
                 finalTotals.Runs += year.Runs;
                 finalTotals.TotalBases += year.TotalBases;
                 finalTotals.HighPops += year.HighPops;
-
+                finalTotals.team_short += year.team_short + " ";
+                finalTotals.team_full += year.team_full + " ";
 
 
             }
@@ -62,8 +62,8 @@ namespace FARTSLAM.Business
             Pitcher finalTotals = new Pitcher();
             foreach (Pitcher year in teams)
             {
-                finalTotals.ab += year.ab;
-                finalTotals.bb += year.bb;
+                finalTotals.AtBats += year.AtBats;
+                finalTotals.Walks += year.Walks;
                 finalTotals.HomeRuns += year.HomeRuns;
                 finalTotals.IntentionalWalks += year.IntentionalWalks;
                 finalTotals.StrikeOuts += year.StrikeOuts;
@@ -73,14 +73,16 @@ namespace FARTSLAM.Business
                 {
                     finalTotals.InningsPitched += .7m;
                 }
-                finalTotals.hb += year.hb;
+                finalTotals.HitBatters += year.HitBatters;
                 finalTotals.Hits += year.Hits;
                 finalTotals.season = year.season;
-                finalTotals.team_full = year.team_full;
                 finalTotals.Wins += year.Wins;
+                finalTotals.team_short += year.team_short + " ";
+                finalTotals.team_full += year.team_full + " ";
+                
             }
 
-            //Gotta calculate innings pitched, (.1,.2) for display, need real decimals for advanced stat calculations. 
+            //Gotta calculate innings pitched for advanced stat calculations. MLB uses .1 and .2 to denote outs in an inning and not 1/3 and 2/3, so IP cannot be used raw.
             double inningsPitched = 0;
             double deci = (double)(finalTotals.InningsPitched - Math.Truncate(finalTotals.InningsPitched));
             switch (deci)
@@ -95,9 +97,9 @@ namespace FARTSLAM.Business
                     inningsPitched = (double)finalTotals.InningsPitched;
                     break;
             }
-            finalTotals.OnBasePercentage = (decimal)((finalTotals.Walks + finalTotals.IntentionalWalks + finalTotals.Hits + finalTotals.HitBatters) / (finalTotals.AtBats + finalTotals.IntentionalWalks + finalTotals.Walks + finalTotals.sac));
+            finalTotals.OnBasePercentage = (decimal)((finalTotals.Walks + finalTotals.IntentionalWalks + finalTotals.Hits + finalTotals.HitBatters) / (finalTotals.AtBats + finalTotals.IntentionalWalks + finalTotals.Walks + finalTotals.SacFlys));
             finalTotals.WHIP = (decimal)((finalTotals.Walks + finalTotals.Hits) / inningsPitched);
-            finalTotals.EarnedRunAverage = (decimal)(finalTotals.EarnedRuns / inningsPitched) * 9;
+            finalTotals.EarnedRunAverage = 9 * (decimal)(finalTotals.EarnedRuns / inningsPitched);
             finalTotals.HomeRunsPer9 = 9 * (decimal)(finalTotals.HomeRuns / inningsPitched);
             finalTotals.WalksPer9 = 9 * (decimal)(finalTotals.Walks / inningsPitched);
             finalTotals.StrikeOutsPer9 = 9 * (decimal)(finalTotals.StrikeOuts / finalTotals.InningsPitched);
@@ -116,7 +118,7 @@ namespace FARTSLAM.Business
 
         public async Task<List<Hitter>> GetHitterData(int playerId, int year)
         {
-            List<Hitter> yearData = null;
+            List<Hitter> yearData = new List<Hitter>();
             var url = "http://lookup-service-prod.mlb.com/json/named.sport_hitting_tm.bam";
             using (var client = new HttpClient())
             {
@@ -137,6 +139,10 @@ namespace FARTSLAM.Business
                     if (statsResponse != null)
                     {
                         yearData = statsResponse.response.queryResults.row;
+                    }
+                    else
+                    {
+                        yearData.Add(new Hitter() { season = year.ToString(), team_short = "DNP" });
                     }
 
 

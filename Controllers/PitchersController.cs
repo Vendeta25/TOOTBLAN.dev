@@ -92,7 +92,7 @@ namespace FARTSLAM.Controllers
                 }
                 else
                 {
-                    data.Add(new Pitcher() { season = year.ToString() });
+                    data.Add(new Pitcher() { season = year.ToString(), team_short = "Out for Season" });
                 }
                 year--;
 

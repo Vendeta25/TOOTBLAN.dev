@@ -20,49 +20,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 </head>
-<div class="text-center">
-    <div class="row">
-        <div class="col-2 offset-3">
-            @Html.DropDownList("dropDownYears", Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @onchange = "statGrapher.getTeamsList(this.value)" })
-        </div>
-        <div class="col-3 ">
-            @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)" })
-        </div>
-        <div class="col-3">
-            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control" })
-        </div>
-        <div class="col-1">
-            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())">Add</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-1 offset-3" style="margin-top: 20px; margin-bottom:10px; padding:0px;">
-            <label>Stats:</label>
-        </div>
-        <div class="col  btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
-            <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">Average</button>
-            <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">On Base %</button>
-            <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">Slugging %</button>
-            <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">OPS</button>
-            <button id="attrButton4" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(4)">Hits</button>
-            <button id="attrButton9" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(9)">HR</button>
-            <button id="attrButton5" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(5)">At Bats</button>
-            <button id="attrButton6" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(6)">Walks</button>
-            <button id="attrButton7" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(7)">IBB</button>
-            <button id="attrButton8" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(8)">HBP</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-1 offset-3" style="margin-top: 15px; margin-bottom:10px; padding:0px;" >
-            <label>Graph By:</label>
-        </div>
-        <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
-            <button id="modeButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchMode(0)">Season</button>
-            <button id="modeButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchMode(1)">Years in League</button>
-        </div>
-    </div>
-</div>
-<div class="text-center">
+
+
+
+
     <div class="row">
         <div class="col-3">
             <table id="playerList" class="table table-striped table-sm table-bordered">
@@ -71,7 +32,52 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-9">
+        <div class="col">
+            <div class="row">
+                <div class="col-2" id="divDropDownYears">
+                    @Html.DropDownList("dropDownYears", Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @onchange = "statGrapher.getTeamsList(this.value)", @datatoggle = "tooltip", @dataplacement = "top", @title = "Season a player played in" })
+                </div>
+                <div class="col-3" id="divDropDownTeams">
+                    @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)", @datatoggle = "tooltip", @dataplacement = "top", @title = "Team the player played on for selected season." })
+                </div>
+                <div class="col-3" id="divDropDownPlayers">
+                    @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control", @onchange = "statGrapher.toggleAddActive()", @datatoggle = "tooltip", @dataplacement = "top", @title = "Players on selected team" })
+                </div>
+                <div class="col-1">
+                    <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())" disabled>Add</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1" style="margin-top: 20px; margin-bottom:10px; padding:0px;">
+                    <label>Stats:</label>
+                </div>
+                <div class="col  btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+                    <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">Average</button>
+                    <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">On Base %</button>
+                    <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">Slugging %</button>
+                    <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">OPS</button>
+                    <button id="attrButton4" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(4)">Hits</button>
+                    <button id="attrButton9" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(9)">HR</button>
+                    <button id="attrButton5" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(5)">At Bats</button>
+                    <button id="attrButton6" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(6)">Walks</button>
+                    <button id="attrButton7" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(7)">IBB</button>
+                    <button id="attrButton8" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(8)">HBP</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1" style="margin-top: 15px; margin-bottom:10px; padding:0px;" >
+                    <label>Graph By:</label>
+                </div>
+                <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
+                    <button id="modeButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchMode(0)">Season</button>
+                    <button id="modeButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchMode(1)">Years in League</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="text-center">
+    <div class="row">
+        <div class="col">
             <canvas max-height="400" width="400" id="graphCanvas"></canvas>
         </div>
     </div>
@@ -112,6 +118,7 @@
                     $("#dropDownTeams").append($('<option></option>').text("...Teams...").val("0"));
                     $("#dropDownPlayers").empty();
                     $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
+                    statGrapher.toggleAddActive();
                     $.each(response, function (i, item) {
                         $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
                     });
@@ -131,7 +138,7 @@
                 success: function (response) {
                     $("#dropDownPlayers").empty();
                     $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
-
+                    statGrapher.toggleAddActive();
                     $.each(response, function (i, item) {
                         $("#dropDownPlayers").append($('<option></option>').text(item.text).val(item.value));
                     });
@@ -174,7 +181,24 @@
                 data: {
                     datasets: []
                 },
-                options: {}
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            title: function (tooltipItem, data) {
+                                var name = statGrapher.data[tooltipItem[0].datasetIndex].name;
+                                return name;
+                            },
+                            label: function (tooltipItem, data) {
+                                var stat = tooltipItem.yLabel.toString();
+                                return stat;
+                            },
+                            afterTitle: function (tooltipItem, data) {
+                                var team = statGrapher.data[tooltipItem[0].datasetIndex].response[tooltipItem[0].index]["team_short"].split(" ");
+                                return team;
+                            }
+                        },
+                    }
+                }
             });
             for (i = 0; i < statGrapher.data.length; i++) {
                 newSet =
@@ -190,15 +214,17 @@
                             scales: {
                                 xAxes: [{
                                     type: "linear",
-                                    
+
                                     ticks: {
                                         stepSize: 1
                                     }
                                 }],
                                 yAxes: [{
-                                    
+
                                 }]
-                            }
+                            },
+                            
+                        
                         }
                     };
 
@@ -253,11 +279,11 @@
             }
         },
         toggleAddActive: function () {
-            
-            if (statGrapher.data.length == statGrapher.maxPlayers) {
-                $("#btnAddPlayer").prop('disabled', true);
-            } else {
+            var playerSelected = $("#dropDownPlayers option:selected").val() != 0;
+            if (statGrapher.data.length < statGrapher.maxPlayers && playerSelected) {
                 $("#btnAddPlayer").prop('disabled', false);
+            } else {
+                $("#btnAddPlayer").prop('disabled', true);
 
             }
         }
@@ -266,9 +292,10 @@
 
 
     $(document).ready(function () {
+        $("#dropDownYears").append($('<option></option>').text("...Year...").val(0));
         for (var i = 2020; i >= 1900; i--) {
             $("#dropDownYears").append($('<option></option>').text(i).val(i));
         }
-        statGrapher.getTeamsList(2020);
+        
     })
 </script>

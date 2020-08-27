@@ -27,6 +27,7 @@ namespace SampleMVCApps
             services.AddSingleton<IStatRetreiver, StatRetreiver>();
 
             services.AddControllersWithViews();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddMvc();
         }
 

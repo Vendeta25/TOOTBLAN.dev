@@ -14,7 +14,7 @@ namespace FARTSLAM.Data
 
         public DbSet<Team> Teams { get; set; }
 
-
+        public DbSet<SeasonAverage> SeasonAverages { get; set; }
     }
 }
 
