@@ -12,73 +12,115 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
-    @*<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        //<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">*@
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 </head>
-<div class="text-center">
-    <div class="row">
-        <div class="col-2 offset-3">
-            @Html.DropDownList("dropDownYears", Enumerable.Empty<SelectListItem>(), new { @class = "form-control", @onchange = "statGrapher.getTeamsList(this.value)" })
-        </div>
-        <div class="col-3">
-            @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control", @onchange = "statGrapher.getPlayersList(this.value)" })
-        </div>
-        <div class="col-3">
-            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control"})
-        </div>
-        <div class="col-1">
-            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())" disabled>Add</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-1 offset-3" style="margin-top: 20px; margin-bottom:10px; text-align:center;"  >
-            <label>Stats:</label>
-        </div>
-        <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
-            <button id="attrButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchAttribute(0)">ERA</button>
-            <button id="attrButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(1)">Ks</button>
-            <button id="attrButton2" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(2)">K/9</button>
-            <button id="attrButton3" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(3)">H</button>
-            <button id="attrButton4" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(4)">H/9</button>
-            <button id="attrButton5" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(5)">HR</button>
-            <button id="attrButton6" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(6)">HR/9</button>
-            <button id="attrButton7" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(7)">BB</button>
-            <button id="attrButton8" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(8)">BB/9</button>
-            <button id="attrButton9" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(9)">WHIP</button>
-            <button id="attrButton10" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(10)">IP</button>
-            <button id="attrButton11" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(11)">Earned Runs</button>
-            <button id="attrButton12" type="button" class="btn btn-secondary" onclick="statGrapher.switchAttribute(12)">Hit Batters</button>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
 
+    <button type="button" id="sidebarCollapse" style="color: black; background-color: none; margin-right: 30px;" class="btn btn-light">
+        <i class="fas fa-align-left"></i>
+    </button>
+    <div class="navbar-brand" href="#">Player Finder</div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+
+        <form class="form-inline my-2 my-lg-0 mx-2">
+            @Html.DropDownList("dropDownYears", Enumerable.Empty<SelectListItem>(), new { @class = "form-control nav-option mx-5", @onchange = "statGrapher.getTeamsList(this.value)", @datatoggle = "tooltip", @dataplacement = "top", @title = "Season a player played in" })
+            @Html.DropDownList("dropDownTeams", Enumerable.Empty<SelectListItem>(), "...Team...", new { @class = "form-control nav-option mx-5", @onchange = "statGrapher.getPlayersList(this.value)", @datatoggle = "tooltip", @dataplacement = "top", @title = "Team the player played on for selected season." })
+            @Html.DropDownList("dropDownPlayers", Enumerable.Empty<SelectListItem>(), "...Player...", new { @class = "form-control mx-5", @onchange = "statGrapher.toggleAddActive()", @datatoggle = "tooltip", @dataplacement = "top", @title = "Players on selected team" })
+            <button id="btnAddPlayer" class="btn btn-primary" onclick="statGrapher.getPlayerData($('#dropDownPlayers').val())" disabled>Add</button>
+        </form>
+    </div>
+
+</nav>
+
+
+
+
+<div class="wrapperInner" id="innerWrapper">
+
+    <!-- Sidebar -->
+    <nav id="sidebarInner">
+
+        <ul class="list-unstyled components" style="padding-top:0px;">
+            <li class="active">
+                <a href="#playersList" id="playersListClick" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle show">Players</a>
+                <ul class="collapse list-unstyled show" id="playersList" style="border-bottom: 1px solid #e5e5e5;">
+                </ul>
+            </li>
+            <li><sidebarHeader>Graph Options</sidebarHeader></li>
+            <li class="active">
+                <a href="#attrControls" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle">Attributes</a>
+                <ul class="collapse list-unstyled show" id="attrControls">
+                    <li>
+                        <a id="attrButton0" class="active" onclick="statGrapher.switchAttribute(0)">Earned Run Average</a>
+                    </li>
+                    <li>
+                        <a id="attrButton1" onclick="statGrapher.switchAttribute(1)">Strike Outs</a>
+                    </li>
+                    <li>
+                        <a id="attrButton2" onclick="statGrapher.switchAttribute(2)">K/9</a>
+                    </li>
+                    <li>
+                        <a id="attrButton3" onclick="statGrapher.switchAttribute(3)">Hits</a>
+                    </li>
+                    <li>
+                        <a id="attrButton4" onclick="statGrapher.switchAttribute(4)">H/9</a>
+                    </li>
+                    <li>
+                        <a id="attrButton5" onclick="statGrapher.switchAttribute(5)">Home Runs</a>
+                    </li>
+                    <li>
+                        <a id="attrButton6" onclick="statGrapher.switchAttribute(6)">HR/9</a>
+                    </li>
+                    <li>
+                        <a id="attrButton7" onclick="statGrapher.switchAttribute(7)">Walks</a>
+                    </li>
+                    <li>
+                        <a id="attrButton8" onclick="statGrapher.switchAttribute(8)">BB/9</a>
+                    </li>
+                    <li>
+                        <a id="attrButton9" onclick="statGrapher.switchAttribute(9)">WHIP</a>
+                    </li>
+                    <li>
+                        <a id="attrButton9" onclick="statGrapher.switchAttribute(10)">IP</a>
+                    </li>
+                    <li>
+                        <a id="attrButton9" onclick="statGrapher.switchAttribute(11)">Earned Runs</a>
+                    </li>
+                    <li>
+                        <a id="attrButton9" onclick="statGrapher.switchAttribute(12)">IBB</a>
+                    </li>
+
+
+                </ul>
+            </li>
+            <li class="active">
+                <a href="#modeControls" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Graph By</a>
+                <ul class="collapse list-unstyled" id="modeControls">
+                    <li>
+                        <a id="modeButton0" class="active" onclick="statGrapher.switchMode(0)">Season</a>
+                    </li>
+                    <li>
+                        <a id="modeButton1" onclick="statGrapher.switchMode(1)">Years in Majors</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content">
+        <div class="container">
+            <main role="main" class="pb-3" style="padding:30px;">
+                <div class="text-center">
+                    <canvas max-height="3000" width="1500" id="graphCanvas"></canvas>
+                </div>
+            </main>
         </div>
     </div>
-    <div class="row">
-        <div class="col-1 offset-3" style="margin-top: 15px; margin-bottom:10px; text-align:center; padding:0px;" >
-            <label>Graph By:</label>
-        </div>
-        <div class="col btn-group" role="group" style="margin-top: 10px; margin-bottom:10px;">
-            <button id="modeButton0" type="button" class="btn btn-secondary btn-warning" onclick="statGrapher.switchMode(0)">Season</button>
-            <button id="modeButton1" type="button" class="btn btn-secondary" onclick="statGrapher.switchMode(1)">Years in League</button>
-        </div>
-    </div>
-</div>
-<div class="text-center">
-    <div class="row">
-        <div class="col-3">
-            <table id="playerList" class="table table-striped table-sm table-bordered">
-                <thead><tr><th colspan="2" style="text-align:center">Players</th></tr></thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-9">
-            <canvas max-height="400" width="400" id="graphCanvas"></canvas>
-        </div>
-    </div>
+
 </div>
 
 <script>
@@ -106,26 +148,26 @@
         maxPlayers: 3,
         modeIndex: 0,
         getTeamsList: function (year) {
-            var year = 
-            $.ajax({
-                type: "GET",
-                url: "Home/GetTeamsForYear",
-                data: { year: year },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    $("#dropDownTeams").empty();
-                    $("#dropDownTeams").append($('<option></option>').text("...Teams...").val("0"));
-                    $("#dropDownPlayers").empty();
-                    $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
-                    statGrapher.toggleAddActive();
-                    $.each(response, function (i, item) {
+            var year =
+                $.ajax({
+                    type: "GET",
+                    url: "Home/GetTeamsForYear",
+                    data: { year: year },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        $("#dropDownTeams").empty();
+                        $("#dropDownTeams").append($('<option></option>').text("...Teams...").val("0"));
+                        $("#dropDownPlayers").empty();
+                        $("#dropDownPlayers").append($('<option></option>').text("...Players...").val("0"));
+                        statGrapher.toggleAddActive();
+                        $.each(response, function (i, item) {
 
-                        $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
-                    });
-                },
-                error: function () { alert("Error: Failed to get team list") }
-            });
+                            $("#dropDownTeams").append($('<option></option>').text(item.text).val(item.value));
+                        });
+                    },
+                    error: function () { alert("Error: Failed to get team list") }
+                });
         },
 
         getPlayersList: function (id) {
@@ -163,8 +205,8 @@
                 success: function (response) {
                     statGrapher.data.push({ name, response });
                     statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex], statGrapher.modes[statGrapher.modeIndex]);
-                    var newRow = "<tr><td>" + name + "</td><td><button class='btn btn-danger' onclick='statGrapher.removeData(this)'>Remove</button></td>";
-                    $("#playerList tbody").append(newRow);
+                    var newRow = "<li><item><player>" + name + "</player><btnPlayer class='btn-danger' onclick='statGrapher.removeData(this)'>X</btnPlayer></item></li>";
+                    $("#playersList").append(newRow);
                     statGrapher.toggleAddActive();
                 },
                 error: function () { alert("Error: failed to get player data") }
@@ -201,27 +243,27 @@
             });
             for (i = 0; i < statGrapher.data.length; i++) {
                 newSet =
-                    {
-                        label: statGrapher.data[i].name,
-                        fill: true,
-                        borderColor: statGrapher.colors[i][1],
-                        backgroundColor: statGrapher.colors[i][0],
-                        pointBackgroundColor: statGrapher.colors[i][2],
-                        showLine: true,
-                        data: [],
-                        options: {
-                            scales: {
-                                xAxes: [{
-                                    type: "linear",
-                                    ticks: {
-                                        precision: 0
+                {
+                    label: statGrapher.data[i].name,
+                    fill: true,
+                    borderColor: statGrapher.colors[i][1],
+                    backgroundColor: statGrapher.colors[i][0],
+                    pointBackgroundColor: statGrapher.colors[i][2],
+                    showLine: true,
+                    data: [],
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: "linear",
+                                ticks: {
+                                    precision: 0
 
-                                    }
-                                }]
-                            },
-                            
-                        }
-                    };
+                                }
+                            }]
+                        },
+
+                    }
+                };
 
                 for (j = 0; j < statGrapher.data[i].response.length; j++) {
                     switch (mode) {
@@ -248,24 +290,24 @@
 
         removeData: function (e) {
 
-            statGrapher.data.splice(e.closest('tr').rowIndex - 1, 1);
-            e.closest('tr').remove();
+            statGrapher.data.splice($(this).index() - 1, 1);
+            e.closest('li').remove();
             statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex], statGrapher.modes[statGrapher.modeIndex]);
             statGrapher.toggleAddActive();
 
         },
         switchAttribute: function (i) {
             if (i != statGrapher.attrIndex) {
-                $("#attrButton" + i).addClass("btn-warning");
-                $("#attrButton" + statGrapher.attrIndex).removeClass("btn-warning");
+                $("#attrButton" + i).addClass("active");
+                $("#attrButton" + statGrapher.attrIndex).removeClass("active");
                 statGrapher.attrIndex = i;
                 statGrapher.graphData(statGrapher.pitchersAttributes[i], statGrapher.modes[statGrapher.modeIndex]);
             }
         },
         switchMode: function (i) {
             if (i != statGrapher.modeIndex) {
-                $("#modeButton" + i).addClass("btn-warning");
-                $("#modeButton" + statGrapher.modeIndex).removeClass("btn-warning");
+                $("#modeButton" + i).addClass("active");
+                $("#modeButton" + statGrapher.modeIndex).removeClass("active");
                 statGrapher.modeIndex = i;
                 statGrapher.graphData(statGrapher.pitchersAttributes[statGrapher.attrIndex], statGrapher.modes[i]);
             }
