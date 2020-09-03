@@ -2,9 +2,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace MLBApp.Models
+namespace FARTSLAM.Models
 {
-    public class queryresultsPlayer
+    public class PlayerResults
     {
         [JsonProperty("created")]
         public string created { get; set; }
@@ -13,24 +13,24 @@ namespace MLBApp.Models
         public string totalSize { get; set; }
 
         [JsonProperty("row")]
-        [JsonConverter(typeof(SingleOrArrayConverter<PlayerModel>))]
-        public List<PlayerModel> row { get; set; }
+        [JsonConverter(typeof(SingleOrArrayConverter<Player>))]
+        public List<Player> row { get; set; }
     }
-    public class resultsShellPlayer
+    public class PlayerCopyright
 
     {
         public string copyRight { get; set; }
         [JsonProperty("queryResults")]
 
-        public queryresultsPlayer queryResults { get; set; }
+        public PlayerResults queryResults { get; set; }
     }
 
-    public class PlayerJSONResponseModel
+    public class PlayerJSONWrapper
     {
         [JsonProperty("player_info")]
-        public resultsShellPlayer response { get; set; }
+        public PlayerCopyright response { get; set; }
     }
-    public class PlayerModel
+    public class Player
     {
 
         //public string position_txt { get; set; }

@@ -1,0 +1,48 @@
+﻿@using FARTSLAM.Models
+@using FARTSLAM.Models.Entities
+@model CovidOptOutViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+        @*<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        //<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">*@
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    </head>
+<h1>Index</h1>
+
+<div class="text-center">
+    <div class="row">
+        <div class="col-9">
+            <canvas max-height="400" width="400" id="graphCanvas"></canvas>
+        </div>
+    </div>
+    <div class="row">
+        <table>
+
+        
+        </table>
+    </div>
+</div>
+
+<script>
+    var ctx = $("#graphCanvas");
+    $("#areaSelector").bind("change", function () {
+        getData($("#areaSelector").val());
+    });
+    var CHART = new Chart(ctx, {
+        type: 'doughnut',
+        responsive: true,
+        data: {
+            datasets: []
+        },
+        options: {}
+    });
+</script>

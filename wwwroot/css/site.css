@@ -9,7 +9,7 @@ a.navbar-brand {
 
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+  color: #fff;
 }
 
 .btn-primary {
@@ -68,4 +68,224 @@ body {
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+/*Sidebar styles*/
+.wrapper {
+    display: flex;
+    align-items: stretch;
+    margin-bottom:61px;
+}
+.wrapperInner {
+    display: flex;
+    align-items: stretch;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+}
+
+    #sidebar.active {
+        margin-left: -250px;
+    }
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #000000;
+}
+
+
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+#sidebar {
+    /* don't forget to add all the previously mentioned styles here too */
+    background: #4da3ff;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+    #sidebar .sidebar-header {
+        padding: 20px;
+        background: #1861ac;
+    }
+
+    #sidebar ul.components {
+    }
+
+    #sidebar ul p {
+        color: #fff;
+        padding: 10px;
+    }
+
+    #sidebar ul li a {
+        font-size: 1.1em;
+        display: block;
+        color:#fff;
+    }
+
+        #sidebar ul li a:hover {
+            color: #4da3ff;
+            background: #fff;
+        }
+
+    #sidebar ul li.active > a, a[aria-expanded="true"] {
+        color: #fff;
+        background: #6d7fcc;
+    }
+
+#sidebarInner {
+    /* don't forget to add all the previously mentioned styles here too */
+    background: #7386D5;
+    color: #fff;
+    transition: all 0.3s;
+}
+#sidebarInner {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #6d7fcc;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+nav-option{
+    position:fixed
+
+}
+
+#sidebarInner {
+    /* don't forget to add all the previously mentioned styles here too */
+    background: #fff;
+    color: #000000;
+    transition: all 0.3s;
+    
+}
+
+    #sidebarInner .sidebar-header {
+        padding: 20px;
+        background: #3182bd;
+    }
+
+    #sidebarInner ul.components {
+        padding: 20px 0;
+        border-right: solid 1px black;
+        padding-bottom:0px;
+        height:100%;
+    }
+
+    #sidebarInner ul p {
+        color: #fff;
+        padding: 10px;
+    }
+    #sidebarInner ul li sidebarHeader {
+        padding: 10px;
+        font-size: 1.1em;
+        display: block;
+        background: #fff;
+    }
+
+    #sidebarInner ul li a {
+        padding: 10px;
+        font-size: 1.1em;
+        display: block;
+        background: #fff;
+    }
+
+        #sidebarInner ul li a:hover {
+            color: #000000;
+            background: #e5e5e5;
+        }
+        #sidebarInner ul li a.active {
+            color: #000000;
+            background: #f0ad4e;
+        }
+
+    #sidebarInner ul li item {
+        padding: 10px;
+        font-size: 1.1em;
+        display: block;
+        background: #fff;
+        padding: 0px;
+        border-bottom: solid 1px black;
+    }
+        #sidebarInner ul li item player {
+            padding: 10px;
+            font-size: 1.1em;
+            display: inline-block;
+            background: #fff;
+            width: 75%;
+        }
+
+        #sidebarInner ul li item btnPlayer {
+            padding: 10px;
+            font-size: 1.1em;
+            display: inline-block;
+            width:25%;
+            color:black;
+            text-align:center;
+        }
+
+    #sidebarInner ul li.active > a, a[aria-expanded="true"] {
+        color: #000000;
+        background: #e5e5e5;
+    }
+
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+
+        #sidebar.active {
+            margin-left: 0;
+        }
 }
