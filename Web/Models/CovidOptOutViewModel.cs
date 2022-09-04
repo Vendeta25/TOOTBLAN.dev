@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FARTSLAM.Models.Entities;
+using TOOTBLAN.Models.Entities;
 
-namespace FARTSLAM.Models
+namespace TOOTBLAN.Models
 {
     public class CovidOptOutViewModel
     {

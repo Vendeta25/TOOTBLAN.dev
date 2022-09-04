@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data.Entity;
-using FARTSLAM.Models.Entities;
+using TOOTBLAN.Models.Entities;
 
-namespace FARTSLAM.Data
+namespace TOOTBLAN.Data
 {
-    public class FARTSLAMDBContext: DbContext
+    public class TOOTBLANDBContext: DbContext
     {
         public DbSet<PitcherProjection> PitcherProjections { get; set; }
         public DbSet<HitterProjection> HitterProjections { get; set; }

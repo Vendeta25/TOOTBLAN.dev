@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FARTSLAM.Business;
+using TOOTBLAN.Business;
 namespace SampleMVCApps
 {
     public class Startup

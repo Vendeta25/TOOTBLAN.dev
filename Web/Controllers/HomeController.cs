@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
-using FARTSLAM.Models;
-using FARTSLAM.Business;
+using TOOTBLAN.Models;
+using TOOTBLAN.Business;
 
-namespace FARTSLAM.Controllers
+namespace TOOTBLAN.Controllers
 {
     
     public class HomeController : Controller

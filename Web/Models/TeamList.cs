@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace FARTSLAM.Models
+namespace TOOTBLAN.Models
 {
     public class TeamListResults
     {

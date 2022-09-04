@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using FARTSLAM.Models;
+using TOOTBLAN.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
-namespace FARTSLAM.Business
+namespace TOOTBLAN.Business
 {
     public class StatRetreiver : IStatRetreiver
     {

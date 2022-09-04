@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using FARTSLAM.Data;
-using FARTSLAM.Models;
-using FARTSLAM.Models.Entities;
+using TOOTBLAN.Data;
+using TOOTBLAN.Models;
+using TOOTBLAN.Models.Entities;
 
-namespace FARTSLAM.Controllers
+namespace TOOTBLAN.Controllers
 {
     public class CovidController : Controller
     {
-        private FARTSLAMDBContext db;
+        private TOOTBLANDBContext db;
 
         
         public CovidController() {
-            this.db = new FARTSLAMDBContext();
+            this.db = new TOOTBLANDBContext();
             
         }
 

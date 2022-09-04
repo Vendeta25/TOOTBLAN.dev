@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
-namespace FARTSLAM.Models
+namespace TOOTBLAN.Models
 {
     class SingleOrArrayConverter<T> : JsonConverter
     {

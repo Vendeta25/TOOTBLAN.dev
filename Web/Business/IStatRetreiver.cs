@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using FARTSLAM.Models;
+using TOOTBLAN.Models;
 
-namespace FARTSLAM.Business
+namespace TOOTBLAN.Business
 {
     public interface IStatRetreiver
     {

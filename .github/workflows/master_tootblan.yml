@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - fartslam
+name: Build and deploy ASP.Net Core app to Azure Web App - TOOTBLAN
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v1
       with:
-        app-name: 'fartslam'
+        app-name: 'TOOTBLAN'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_ffeff80ccb0e48aa9a70802d2bdc83af }}
         package: ${{env.DOTNET_ROOT}}/myapp 

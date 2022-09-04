@@ -11,10 +11,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using FARTSLAM.Models;
-using FARTSLAM.Business;
+using TOOTBLAN.Models;
+using TOOTBLAN.Business;
 
-namespace FARTSLAM.Controllers
+namespace TOOTBLAN.Controllers
 {
 
     public class PitchersController : Controller
